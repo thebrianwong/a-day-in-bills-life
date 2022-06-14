@@ -1,6 +1,12 @@
 # WIP
 
 
+6/13: changed push workflow to manually creating a new branch, uploading files, and updating readme
+
+Additions:
+
+- Added rotation of goombas.
+  - Only 1 thing but took a long time to figure out.
 
 6/12: still can't figure out how to push changes via git bash, so just manually uploaded files
 
