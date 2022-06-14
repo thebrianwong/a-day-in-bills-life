@@ -114,6 +114,7 @@ function love.update(dt)
     end
     table.insert(goombaTable, goomba)
   end
+  
 end
 
 function love.draw()
@@ -133,8 +134,9 @@ function love.draw()
   end
   
   for i,goomba in ipairs(goombaTable) do
-    goomba:draw()
+    goomba:rotateDraw()
   end
+  
 
   -- Speed counter that is actually based on coin speed, not player speed
   -- This is so that the player's speed can be capped but still

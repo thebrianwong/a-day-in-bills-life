@@ -9,7 +9,7 @@ function Entity:new(x, y, image_path)
 end
 
 function Entity:update(dt)
-  --self.x = self.x - self.speed * dt
+  self.x = self.x - self.speed * dt
 end
 
 function Entity:draw()
