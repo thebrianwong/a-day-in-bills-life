@@ -12,6 +12,8 @@ Adjustments:
 - Changed background from a static image to a moving image. Makings of a prototype work. Will finalize it
   so that the background gets draw properly with correct coordinates. One fear is that they will move too
   fast and there will be weird black choppy lines.
+  
+- Corrected the function names of coin and goomba object files.
 
 6/13: changed push workflow to manually creating a new branch, uploading files, and updating readme
 
