@@ -4,10 +4,24 @@ function love.load()
   require "player"
   require "coin"
   require "goomba"
+  require "background"
   background = love.graphics.newImage("background.png")
   
   player = Player(150, 250)
   
+  
+  backgroundTable = {}
+  
+  temp = Background(0, 0)
+  
+  for i = 0, 1 do
+    for j = 0, 1 do
+      bg = Background(j * temp.width, i * temp.height)
+      table.insert(backgroundTable, bg)
+    end
+  end
+  
+  print(#backgroundTable)
   
   coinTable = {}
 
@@ -47,6 +61,20 @@ function love.update(dt)
   coinSpeed = coinSpeed + 0.5 * dt
   
   speedUp(player, 0.75, dt)
+  
+  for i,bg in ipairs(backgroundTable) do
+    bg:update(dt)
+    if bg.x + bg.width < 0 then
+      table.remove(backgroundTable, i)
+    end
+    while #backgroundTable < 5 do
+      print(#backgroundTable)
+      bg = Background(800, 0)
+      table.insert(backgroundTable, bg)
+      bg1 = Background(800, 400)
+      table.insert(backgroundTable, bg1)
+    end
+  end
   
   for i,coin in ipairs(coinTable) do
     coin:update(dt)
@@ -120,11 +148,18 @@ end
 function love.draw()
 
   -- Draws the background image to the game
-  for i = 0, love.graphics.getWidth() / background:getWidth() do
-    for j = 0, love.graphics.getHeight() / background:getHeight() do
-      love.graphics.draw(background, i * background:getWidth(), j * background:getHeight())
-    end
+ -- for i = 0, love.graphics.getWidth() / background:getWidth() do
+ --   for j = 0, love.graphics.getHeight() / background:getHeight() do
+ --     love.graphics.draw(background, i * background:getWidth(), j * background:getHeight())
+ --   end
+ -- end
+  
+  for i,bg in ipairs(backgroundTable) do
+    bg:draw()
   end
+  
+  -- Draws translucent black box background for game stats
+  hud()
   
   -- love.graphics.translate(-player.x + 150, -player.y + 250)
   player:draw()
@@ -175,4 +210,10 @@ end
 function displayInfo(info, number, x, y)
   -- Displays game info stats
   love.graphics.print(info .. ": " .. number, x, y)
+end
+
+function hud()
+  love.graphics.setColor(0, 0, 0, 0.25)
+  love.graphics.rectangle("fill", 5, 45, 115, 105)
+  love.graphics.setColor(1, 1, 1)
 end

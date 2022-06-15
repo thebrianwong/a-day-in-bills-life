@@ -1,7 +1,7 @@
 Coin = Entity:extend()
 
 function Coin:new(x, y)
-  Player.super.new(self, x, y, "coin.png")
+  Coin.super.new(self, x, y, "coin.png")
   self.speed = 50
 end
   
