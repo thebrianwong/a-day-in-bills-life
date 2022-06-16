@@ -1,5 +1,18 @@
 # WIP
 
+6/15:
+
+Additions:
+
+- Added config file to force vsync on to address the next point
+
+- Got scrolling background closer to work, but has issue of weird black vertical line stutter.
+  Look online and turned vsync on but still has error.
+
+Adjustments:
+
+- Changed the logic of the scrolling background so that their x coordinates get reset to to off screen,
+  instead of removing and adding a new object for the illusion of an infinite scrolling background.
 
 6/14: followed new workflow
 

@@ -13,16 +13,18 @@ function love.load()
   backgroundTable = {}
   
   temp = Background(0, 0)
+  bgSpeed = 1
+  bgOffset = 1
   
-  for i = 0, 1 do
-    for j = 0, 1 do
+  for i = 0, 2 do
+    for j = 0, 2 do
       bg = Background(j * temp.width, i * temp.height)
+      bg.speed = bgSpeed
       table.insert(backgroundTable, bg)
     end
   end
   
-  print(#backgroundTable)
-  
+
   coinTable = {}
 
   -- Initially spawns 5 coins
@@ -65,15 +67,16 @@ function love.update(dt)
   for i,bg in ipairs(backgroundTable) do
     bg:update(dt)
     if bg.x + bg.width < 0 then
-      table.remove(backgroundTable, i)
+      --table.remove(backgroundTable, i)
+      bg.x = (2 * temp.width - bgOffset)
     end
-    while #backgroundTable < 5 do
-      print(#backgroundTable)
-      bg = Background(800, 0)
-      table.insert(backgroundTable, bg)
-      bg1 = Background(800, 400)
-      table.insert(backgroundTable, bg1)
-    end
+  --  while #backgroundTable < 5 do
+  --    print(#backgroundTable)
+   --   bgTop = Background(2 * temp.width, 0)
+   --   table.insert(backgroundTable, bgTop)
+    --  bgBottom = Background(2 * temp.width, temp.height)
+    --  table.insert(backgroundTable, bgBottom)
+   -- end
   end
   
   for i,coin in ipairs(coinTable) do
@@ -84,14 +87,17 @@ function love.update(dt)
         speedUp(player, 5, 1)
       end
       coinSpeed = coinSpeed + 5
+      bgSpeed = bgSpeed + 1
+      bgOffset = bgOffset + 1
+  --    for i,bg in ipairs(backgroundTable) do
+   --     bg.speed = bgSpeed
+ --     end
       -- Updates game stats
       collectedCoins = collectedCoins + 1
       streakCoinsCurrent = streakCoinsCurrent + 1
       if streakCoinsCurrent > streakCoinsBest then
         streakCoinsBest = streakCoinsCurrent
       end
-      print(coin.speed)
-      print(player.speed)
     end
     if coin.x < 0 then
       table.remove(coinTable, i)
