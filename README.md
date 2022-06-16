@@ -1,5 +1,13 @@
 # WIP
 
+6/15:
+
+Additions:
+
+- Added config file to force vsync on to address the next point
+
+- Got scrolling background closer to work, but has issue of weird black vertical line stutter.
+  Look online and turned vsync on but still has error.
 
 6/14: followed new workflow
 
