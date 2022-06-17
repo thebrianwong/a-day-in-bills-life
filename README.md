@@ -14,6 +14,8 @@ Adjustments:
 
 - Deleted some unnecessary and other miscellaneous lines of code.
 
+- Changed the names of the background variable so that they are more clear.
+
 6/15:
 
 Additions:
