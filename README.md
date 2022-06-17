@@ -1,5 +1,19 @@
 # WIP
 
+6/16:
+
+Additions:
+
+- Made bandage solution for scrolling black bars by setting the background color to be the same blue as the
+  scrolling background. Good solution in that it is only one line of code, but bad solution because there
+  is still some choppyness that adds up over time to the background images laying over each other. It is not
+  really noticeable because of how fast things are, but it it still something to consider.
+  - Still does not use dt in scrolling calculation because that screws up the overlapping even more.
+  
+Adjustments:
+
+- Deleted some unnecessary and other miscellaneous lines of code.
+
 6/15:
 
 Additions:
