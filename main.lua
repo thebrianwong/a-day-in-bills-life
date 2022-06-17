@@ -5,22 +5,20 @@ function love.load()
   require "coin"
   require "goomba"
   require "background"
-  background = love.graphics.newImage("background.png")
+  
+  background_image = love.graphics.newImage("background.png")
   
   player = Player(150, 250)
   
   
   backgroundTable = {}
-  
-  temp = Background(0, 0)
-  bgSpeed = 1
-  bgOffset = 1
+  backgroundSpeed = 0.5
   
   for i = 0, 2 do
     for j = 0, 2 do
-      bg = Background(j * temp.width, i * temp.height)
-      bg.speed = bgSpeed
-      table.insert(backgroundTable, bg)
+      background = Background(j * background_image:getWidth(), i * background_image:getHeight())
+      background.speed = backgroundSpeed
+      table.insert(backgroundTable, background)
     end
   end
   
@@ -63,20 +61,12 @@ function love.update(dt)
   coinSpeed = coinSpeed + 0.5 * dt
   
   speedUp(player, 0.75, dt)
-  
-  for i,bg in ipairs(backgroundTable) do
-    bg:update(dt)
-    if bg.x + bg.width < 0 then
-      --table.remove(backgroundTable, i)
-      bg.x = (2 * temp.width - bgOffset)
+
+  for i,background in ipairs(backgroundTable) do
+    background:update(dt)
+    if background.x + background.width <= 0 then
+      background.x = (2 * background.width - backgroundSpeed)
     end
-  --  while #backgroundTable < 5 do
-  --    print(#backgroundTable)
-   --   bgTop = Background(2 * temp.width, 0)
-   --   table.insert(backgroundTable, bgTop)
-    --  bgBottom = Background(2 * temp.width, temp.height)
-    --  table.insert(backgroundTable, bgBottom)
-   -- end
   end
   
   for i,coin in ipairs(coinTable) do
@@ -87,11 +77,10 @@ function love.update(dt)
         speedUp(player, 5, 1)
       end
       coinSpeed = coinSpeed + 5
-      bgSpeed = bgSpeed + 1
-      bgOffset = bgOffset + 1
-  --    for i,bg in ipairs(backgroundTable) do
-   --     bg.speed = bgSpeed
- --     end
+      backgroundSpeed = backgroundSpeed + 0.025
+      for i,background in ipairs(backgroundTable) do
+        background.speed = backgroundSpeed
+      end
       -- Updates game stats
       collectedCoins = collectedCoins + 1
       streakCoinsCurrent = streakCoinsCurrent + 1
@@ -115,11 +104,11 @@ function love.update(dt)
       end
       coinSpeed = coinSpeed - 5
       -- Updates game stats
-      --collectedCoins = collectedCoins + 1
-      --streakCoinsCurrent = streakCoinsCurrent + 1
-      --if streakCoinsCurrent > streakCoinsBest then
-        --streakCoinsBest = streakCoinsCurrent
-      --end
+      collectedCoins = collectedCoins + 1
+      streakCoinsCurrent = streakCoinsCurrent + 1
+      if streakCoinsCurrent > streakCoinsBest then
+        streakCoinsBest = streakCoinsCurrent
+      end
     end
     if goomba.x < 0 then
       table.remove(goombaTable, i)
@@ -152,16 +141,12 @@ function love.update(dt)
 end
 
 function love.draw()
-
-  -- Draws the background image to the game
- -- for i = 0, love.graphics.getWidth() / background:getWidth() do
- --   for j = 0, love.graphics.getHeight() / background:getHeight() do
- --     love.graphics.draw(background, i * background:getWidth(), j * background:getHeight())
- --   end
- -- end
+  -- Sets the background to blue as a solution for scrolling vertical bars
+  love.graphics.setBackgroundColor(40/255, 123/255, 241/255)
   
-  for i,bg in ipairs(backgroundTable) do
-    bg:draw()
+  -- Draws background images
+  for i,background in ipairs(backgroundTable) do
+    background:draw()
   end
   
   -- Draws translucent black box background for game stats
@@ -220,6 +205,6 @@ end
 
 function hud()
   love.graphics.setColor(0, 0, 0, 0.25)
-  love.graphics.rectangle("fill", 5, 45, 115, 105)
+  love.graphics.rectangle("fill", 5, 45, 121`, 105)
   love.graphics.setColor(1, 1, 1)
 end
