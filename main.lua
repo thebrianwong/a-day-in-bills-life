@@ -9,7 +9,7 @@ function love.load()
   background_image = love.graphics.newImage("background.png")
   
   player = Player(150, 250)
-  
+  playerColor = 255
   
   backgroundTable = {}
   backgroundSpeed = 0.5
@@ -73,11 +73,16 @@ function love.update(dt)
     coin:update(dt)
     if player:checkCollision(coin) then
       table.remove(coinTable, i)
-      if player.speed < 300 then
-        speedUp(player, 5, 1)
+      speedUp(player, 10, 1)
+      if coinSpeed > 1000 then
+        coinSpeed = coinSpeed + 20
+      else
+        coinSpeed = coinSpeed + 10
       end
-      coinSpeed = coinSpeed + 5
       backgroundSpeed = backgroundSpeed + 0.025
+      if coinSpeed > 750 then
+        playerColor = playerColor - 1
+      end
       for i,background in ipairs(backgroundTable) do
         background.speed = backgroundSpeed
       end
@@ -99,16 +104,17 @@ function love.update(dt)
     goomba:update(dt)
     if player:checkCollision(goomba) then
       table.remove(goombaTable, i)
-      if player.speed > 50 then
+      if coinSpeed > 10 then
         speedUp(player, -5, 1)
+        coinSpeed = coinSpeed - 5
+        backgroundSpeed = backgroundSpeed - 0.0125
       end
-      coinSpeed = coinSpeed - 5
-      -- Updates game stats
-      collectedCoins = collectedCoins + 1
-      streakCoinsCurrent = streakCoinsCurrent + 1
-      if streakCoinsCurrent > streakCoinsBest then
-        streakCoinsBest = streakCoinsCurrent
-      end
+      -- Updates game stats (save for potential goomba stats)
+  --    collectedCoins = collectedCoins + 1
+  --    streakCoinsCurrent = streakCoinsCurrent + 1
+  --    if streakCoinsCurrent > streakCoinsBest then
+   --     streakCoinsBest = streakCoinsCurrent
+   --   end
     end
     if goomba.x < 0 then
       table.remove(goombaTable, i)
@@ -119,25 +125,24 @@ function love.update(dt)
   while #coinTable < 5 do
     coin = createCoin()
     -- Caps coin speed at 500 while still letting the displayed speed counter to increase
-    if coinSpeed < 500 then
-      coin.speed = coinSpeed
-    else
-      coin.speed = 500
-    end
+  --  if coinSpeed < 500 then
+    coin.speed = coinSpeed
+   -- else
+  --    coin.speed = 500
+  --  end
     table.insert(coinTable, coin)
   end
 
   while #goombaTable < 10 do
     goomba = createGoomba()
     -- Caps coin speed at 500 while still letting the displayed speed counter to increase
-    if coinSpeed < 250 then
-      goomba.speed = coinSpeed
-    else
-      goomba.speed = 250
-    end
+  --  if coinSpeed < 250 then
+    goomba.speed = coinSpeed
+  --  else
+  --    goomba.speed = 250
+ --   end
     table.insert(goombaTable, goomba)
   end
-  
 end
 
 function love.draw()
@@ -153,7 +158,7 @@ function love.draw()
   hud()
   
   -- love.graphics.translate(-player.x + 150, -player.y + 250)
-  player:draw()
+  player:drawColor(playerColor)
   
   for i,coin in ipairs(coinTable) do
     coin:draw()
@@ -205,6 +210,6 @@ end
 
 function hud()
   love.graphics.setColor(0, 0, 0, 0.25)
-  love.graphics.rectangle("fill", 5, 45, 121`, 105)
+  love.graphics.rectangle("fill", 5, 45, 121, 105)
   love.graphics.setColor(1, 1, 1)
 end

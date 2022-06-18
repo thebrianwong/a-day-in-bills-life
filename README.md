@@ -1,5 +1,20 @@
 # WIP
 
+6/17:
+
+Additions:
+
+- Created ability for player to gradually become red as it became faster. The change would happen with the 
+  new function call drawColor() in the player.lua file. A global variable playerColor is initalized to keep
+  track how red the player should be. This variable is passed to the new function to draw the player in a shade
+  of red. The variable changes when the player collides with a coin.
+  
+Adjustments:
+
+- Adjusted some speed numbers to that the speed gained with a coin is greater than the speed lost with a goomba.
+
+- Removed the speed cap for player, coin, and goomba. I think the crazy speed is more fun.
+
 6/16:
 
 Additions:
