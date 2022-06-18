@@ -5,6 +5,12 @@ function Player:new(x, y)
   self.speed = 100
 end
 
+function Player:drawColor(color)
+  love.graphics.setColor(1, color/255, color/255)
+  love.graphics.draw(self.image, self.x, self.y)
+  love.graphics.setColor(1, 1, 1)
+end
+
 function Player:update(dt)
   
   -- 2 seperate if statements so the player can move diagonally
