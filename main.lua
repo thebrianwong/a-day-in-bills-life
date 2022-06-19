@@ -4,12 +4,17 @@ function love.load()
   require "player"
   require "coin"
   require "goomba"
+  require "mario"
   require "background"
   
   background_image = love.graphics.newImage("background.png")
+  mario_image = love.graphics.newImage("mario.png")
   
   player = Player(150, 250)
   playerColor = 255
+  
+  mario = Mario(900, (love.graphics.getHeight() / 2) - (mario_image:getHeight() / 2))
+  speedBarrier = false
   
   backgroundTable = {}
   backgroundSpeed = 0.5
@@ -54,6 +59,27 @@ end
 
 function love.update(dt)
   player:update(dt)
+  mario:update(dt)
+  
+  if coinSpeed > 1500 then
+    player.speed = 0
+    if player.y > 169 then
+      player.y = player.y - 20
+      player.y = 186
+    elseif player.y < 169 then
+      player.y = player.y + 20
+      player.y = 186
+    end
+    mario.speed = coinSpeed
+  end
+  
+  if player:checkCollision(mario) then
+    --player.speed = 0
+    mario.speed = 0
+    for i,background in ipairs(backgroundTable) do
+      background.speed = 0
+    end
+  end
   
   -- Constantly increasing coin speed by a negligible amount so that
   -- the speed counter is constantly increasing and doesn't only increase
@@ -61,6 +87,15 @@ function love.update(dt)
   coinSpeed = coinSpeed + 0.5 * dt
   
   speedUp(player, 0.75, dt)
+  
+  if (coinSpeed > 1000 or speedBarrier) and (player:checkCollision(mario) == false) then
+    speedBarrier = true
+    if player.x == 300 then
+      player.x = player.x - 20
+    elseif player.x > 300 then
+      player.x = player.x - 10
+    end
+  end
 
   for i,background in ipairs(backgroundTable) do
     background:update(dt)
@@ -71,7 +106,7 @@ function love.update(dt)
   
   for i,coin in ipairs(coinTable) do
     coin:update(dt)
-    if player:checkCollision(coin) then
+    if player:checkCollision(coin) and (player:checkCollision(mario) == false) then
       table.remove(coinTable, i)
       speedUp(player, 10, 1)
       if coinSpeed > 1000 then
@@ -81,7 +116,7 @@ function love.update(dt)
       end
       backgroundSpeed = backgroundSpeed + 0.025
       if coinSpeed > 750 then
-        playerColor = playerColor - 1
+        playerColor = playerColor - 3
       end
       for i,background in ipairs(backgroundTable) do
         background.speed = backgroundSpeed
@@ -93,6 +128,7 @@ function love.update(dt)
         streakCoinsBest = streakCoinsCurrent
       end
     end
+    coin.speed = coinSpeed
     if coin.x < 0 then
       table.remove(coinTable, i)
       missedCoins = missedCoins + 1
@@ -102,12 +138,15 @@ function love.update(dt)
   
   for i,goomba in ipairs(goombaTable) do
     goomba:update(dt)
-    if player:checkCollision(goomba) then
+    if player:checkCollision(goomba) and (player:checkCollision(mario) == false) then
       table.remove(goombaTable, i)
-      if coinSpeed > 10 then
+      if coinSpeed > 10 and (speedBarrier == false) then
         speedUp(player, -5, 1)
         coinSpeed = coinSpeed - 5
         backgroundSpeed = backgroundSpeed - 0.0125
+      end
+      if coinSpeed > 750  and playerColor > 0 then
+        playerColor = playerColor - 1
       end
       -- Updates game stats (save for potential goomba stats)
   --    collectedCoins = collectedCoins + 1
@@ -116,13 +155,14 @@ function love.update(dt)
    --     streakCoinsBest = streakCoinsCurrent
    --   end
     end
+    goomba.speed = coinSpeed
     if goomba.x < 0 then
       table.remove(goombaTable, i)
     end
   end
   
   -- While loop to ensure that there are always 5 coins present
-  while #coinTable < 5 do
+  while #coinTable < 5 and (player:checkCollision(mario) == false) do
     coin = createCoin()
     -- Caps coin speed at 500 while still letting the displayed speed counter to increase
   --  if coinSpeed < 500 then
@@ -133,7 +173,7 @@ function love.update(dt)
     table.insert(coinTable, coin)
   end
 
-  while #goombaTable < 10 do
+  while #goombaTable < 10 and (player:checkCollision(mario) == false) do
     goomba = createGoomba()
     -- Caps coin speed at 500 while still letting the displayed speed counter to increase
   --  if coinSpeed < 250 then
@@ -156,6 +196,8 @@ function love.draw()
   
   -- Draws translucent black box background for game stats
   hud()
+  
+  mario:draw()
   
   -- love.graphics.translate(-player.x + 150, -player.y + 250)
   player:drawColor(playerColor)

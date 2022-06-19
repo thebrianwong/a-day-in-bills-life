@@ -1,5 +1,24 @@
 # WIP
 
+6/18:
+
+Additions:
+
+- Created mario object that will scroll on screen once player hits 1500 speed. When player and mario collide,
+  they stop moving, coin and goomba stop respawning, and background stops scrolling. Player is forced into a
+  certain position on the screen once 1500 speed is hit. This functionality could be improved.
+
+- Added a function where once player hits 1000 speed, they can't go past a certain part of the screen.
+
+- Made it so that player reverts from being as red when colliding with a goomba, albeit at a slower rate than
+  turning red.
+  
+Adjustments:
+
+- Changed goomba starting rotation value to 0 instead of 2pi.
+
+- Adjusted the rate at which player changes to red color upon colliding with a coin.
+
 6/17:
 
 Additions:
