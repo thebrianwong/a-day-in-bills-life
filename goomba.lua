@@ -4,7 +4,6 @@ function Goomba:new(x, y)
   Goomba.super.new(self, x, y, "goomba.png")
   self.speed = 50
   self.rotation = 0
-  --self.image = love.graphics.draw(self.image, self.x, self.y, rotation, 1, 1, self.width / 2, self.height / 2)
 end
   
 function Goomba:update(dt)

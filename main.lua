@@ -7,18 +7,31 @@ function love.load()
   require "mario"
   require "background"
   
+  -- Load images because their dimensions will be used for later
+  -- calculations for background and mario.
   background_image = love.graphics.newImage("background.png")
   mario_image = love.graphics.newImage("mario.png")
   
-  player = Player(150, 250)
-  playerColor = 255
-  
-  mario = Mario(900, (love.graphics.getHeight() / 2) - (mario_image:getHeight() / 2))
-  speedBarrier = false
-  
-  backgroundTable = {}
+  -- Keeps track of the scrolling speed of the background.
   backgroundSpeed = 0.5
   
+  -- Used to alter player color as speed increases and coins collected.
+  playerColor = 255
+  
+  -- Determines if the player can move pass x coordinate 300.
+  speedBarrier = false  
+  
+  -- Global variable to keep track of the speed of coins and goombas.
+  objectSpeed = 50
+  
+  -- Initializes stat variables to keep track of game instance info.
+  collectedCoins = 0
+  missedCoins = 0
+  streakCoinsCurrent = 0
+  streakCoinsBest = 0
+  
+  -- Spawns multiple instances of the background on and off-screen to scroll.
+  backgroundTable = {}
   for i = 0, 2 do
     for j = 0, 2 do
       background = Background(j * background_image:getWidth(), i * background_image:getHeight())
@@ -26,96 +39,96 @@ function love.load()
       table.insert(backgroundTable, background)
     end
   end
+
+  -- Spawns player.
+  player = Player(150, 250)
   
-
+  -- Loads mario off-screen, not visible to the user at the
+  -- beginning of the game. Mario is vertically centered.
+  mario = Mario(900, (love.graphics.getHeight() / 2) - (mario_image:getHeight() / 2))
+  
+-- Spawns initial 5 coins.
   coinTable = {}
-
-  -- Initially spawns 5 coins
   for i=1,5 do
     coin = createCoin()
     table.insert(coinTable, coin)
   end
   
-  -- Global variable to keep track of the speed of all coins
-  -- Updating the speed of each individual coin on screen is an issue due to
-  -- the fact that when a coin despawns, the new coin can't keep track of
-  -- the previous speed without this global variable
-  coinSpeed = 50
-  
-  -- Initialize other variables to keep track of game instance info
-  collectedCoins = 0
-  missedCoins = 0
-  streakCoinsCurrent = 0
-  streakCoinsBest = 0
-  
+  -- Spawns initial 10 goombas.
   goombaTable = {}
-  
   for i=1,10 do
     goomba = createGoomba()
     table.insert(goombaTable, goomba)
   end
-  
 end
 
 function love.update(dt)
   player:update(dt)
   mario:update(dt)
   
-  if coinSpeed > 1500 then
+  -- Once 1500 speed is reached, the user can no longer control
+  -- the movement of player, and the player is forced to the 
+  -- approximate coordinates of (300, 186). Mario starts scrolling
+  -- once that happens. The coordinates line up with mario's nose.
+  if objectSpeed > 1500 then
     player.speed = 0
-    if player.y > 169 then
-      player.y = player.y - 20
-      player.y = 186
-    elseif player.y < 169 then
-      player.y = player.y + 20
-      player.y = 186
+    if player.x > 302 then
+      forceX(player, -100, dt)
+    elseif player.x < 298 then
+      forceX(player, 100, dt)
     end
-    mario.speed = coinSpeed
+    if player.y > 188 then
+      forceY(player, -100, dt)
+    elseif player.y < 184 then
+      forceY(player, 100, dt)
+    end
+    if (player.x >= 298 and player.x <= 302) and (player.y >= 184 and player.y <= 188) then
+      mario.speed = objectSpeed
+    end
   end
   
+  -- Stops mario from moving and the background from scrolling
+  -- once the player collides with mario.
   if player:checkCollision(mario) then
-    --player.speed = 0
     mario.speed = 0
     for i,background in ipairs(backgroundTable) do
       background.speed = 0
     end
   end
   
-  -- Constantly increasing coin speed by a negligible amount so that
-  -- the speed counter is constantly increasing and doesn't only increase
-  -- when the player collides with a coin
-  coinSpeed = coinSpeed + 0.5 * dt
+  -- Speed passively increases to contribute to sense of speed.
+  objectSpeed = objectSpeed + 0.5 * dt
   
-  speedUp(player, 0.75, dt)
-  
-  if (coinSpeed > 1000 or speedBarrier) and (player:checkCollision(mario) == false) then
+  -- Limits the player's movement to the left side of the screen
+  -- once 1000 speed is hit. Stuttering pushback is intentional.
+  if (objectSpeed > 1000 or speedBarrier) and (player:checkCollision(mario) == false) then
     speedBarrier = true
-    if player.x == 300 then
-      player.x = player.x - 20
-    elseif player.x > 300 then
-      player.x = player.x - 10
+    if player.x >= 300 then
+      forceX(player, -2500, dt)
     end
   end
 
+  -- When the background goes off-screen, it reappears off-screen
+  -- on the right to scroll again indefinitely.
   for i,background in ipairs(backgroundTable) do
     background:update(dt)
     if background.x + background.width <= 0 then
-      background.x = (2 * background.width - backgroundSpeed)
+      background.x = 2 * background.width - backgroundSpeed
     end
   end
   
   for i,coin in ipairs(coinTable) do
     coin:update(dt)
+    -- The boolean for collision with mario is for the edge case
+    -- of preventing coin collision when the game ends with the 
+    -- player being forced into specific coordinates to collide 
+    -- with mario's nose.
     if player:checkCollision(coin) and (player:checkCollision(mario) == false) then
       table.remove(coinTable, i)
-      speedUp(player, 10, 1)
-      if coinSpeed > 1000 then
-        coinSpeed = coinSpeed + 20
-      else
-        coinSpeed = coinSpeed + 10
-      end
+      changeSpeed(player, 10)
+      objectSpeed = objectSpeed + 10
       backgroundSpeed = backgroundSpeed + 0.025
-      if coinSpeed > 750 then
+      if objectSpeed > 750 and playerColor >= 3 then
         playerColor = playerColor - 3
       end
       for i,background in ipairs(backgroundTable) do
@@ -128,7 +141,8 @@ function love.update(dt)
         streakCoinsBest = streakCoinsCurrent
       end
     end
-    coin.speed = coinSpeed
+    coin.speed = objectSpeed
+    -- Coin despawns upon hitting the left side of the screen.
     if coin.x < 0 then
       table.remove(coinTable, i)
       missedCoins = missedCoins + 1
@@ -138,15 +152,13 @@ function love.update(dt)
   
   for i,goomba in ipairs(goombaTable) do
     goomba:update(dt)
+    -- Same reasoning for boolean as for coin.
     if player:checkCollision(goomba) and (player:checkCollision(mario) == false) then
       table.remove(goombaTable, i)
-      if coinSpeed > 10 and (speedBarrier == false) then
-        speedUp(player, -5, 1)
-        coinSpeed = coinSpeed - 5
+      if objectSpeed > 10 and (speedBarrier == false) then
+        changeSpeed(player, -5)
+        objectSpeed = objectSpeed - 5
         backgroundSpeed = backgroundSpeed - 0.0125
-      end
-      if coinSpeed > 750  and playerColor > 0 then
-        playerColor = playerColor - 1
       end
       -- Updates game stats (save for potential goomba stats)
   --    collectedCoins = collectedCoins + 1
@@ -155,102 +167,104 @@ function love.update(dt)
    --     streakCoinsBest = streakCoinsCurrent
    --   end
     end
-    goomba.speed = coinSpeed
+    goomba.speed = objectSpeed
+    -- Goomba despawns upon hitting the left side of the screen.
     if goomba.x < 0 then
       table.remove(goombaTable, i)
     end
   end
   
-  -- While loop to ensure that there are always 5 coins present
+  -- While loop to ensure that there are always 5 coins present.
   while #coinTable < 5 and (player:checkCollision(mario) == false) do
     coin = createCoin()
-    -- Caps coin speed at 500 while still letting the displayed speed counter to increase
-  --  if coinSpeed < 500 then
-    coin.speed = coinSpeed
-   -- else
-  --    coin.speed = 500
-  --  end
+    coin.speed = objectSpeed
     table.insert(coinTable, coin)
   end
 
+  -- While loop to ensure that there are always 10 goombas present.
   while #goombaTable < 10 and (player:checkCollision(mario) == false) do
     goomba = createGoomba()
-    -- Caps coin speed at 500 while still letting the displayed speed counter to increase
-  --  if coinSpeed < 250 then
-    goomba.speed = coinSpeed
-  --  else
-  --    goomba.speed = 250
- --   end
+    goomba.speed = objectSpeed
     table.insert(goombaTable, goomba)
   end
 end
 
 function love.draw()
-  -- Sets the background to blue as a solution for scrolling vertical bars
+  -- Sets the canvas background to blue as a solution for scrolling vertical bars.
+  -- This is the same blue as the scrolling background.
   love.graphics.setBackgroundColor(40/255, 123/255, 241/255)
   
-  -- Draws background images
+  -- Draws background images.
   for i,background in ipairs(backgroundTable) do
     background:draw()
   end
   
-  -- Draws translucent black box background for game stats
-  hud()
-  
-  mario:draw()
-  
-  -- love.graphics.translate(-player.x + 150, -player.y + 250)
+  -- Draws all entities.
   player:drawColor(playerColor)
-  
+  mario:draw()
   for i,coin in ipairs(coinTable) do
     coin:draw()
   end
-  
   for i,goomba in ipairs(goombaTable) do
     goomba:rotateDraw()
   end
   
+  -- Draws translucent black box background for game stats.
+  createHUD()  
 
-  -- Speed counter that is actually based on coin speed, not player speed
-  -- This is so that the player's speed can be capped but still
-  -- maintain a sense of speed via the coins
-  -- Speed value is formatted to only display 2 decimal places because there
-  -- are, at times, some floating point inprecision, and that would look weird to display
-  displayInfo("Speed", string.format("%.2f",coinSpeed), 10, 50)
+  -- Speed counter to maintain a sense of speed. Speed value is for all entities,
+  -- not just for player. Speed value is formatted to only display 2 decimal places
+  -- because there are, at times, some floating point inprecision, and that would 
+  -- look weird to display.
+  displayInfo("Speed", string.format("%.2f",objectSpeed), 10, 50)
   
-  -- Other fun miscellaneous game info
+  -- Other fun miscellaneous game info.
   displayInfo("Collected", collectedCoins, 10, 70)
   displayInfo("Missed", missedCoins, 10, 90)
   displayInfo("Current Streak", streakCoinsCurrent, 10, 110)
   displayInfo("Best Streak", streakCoinsBest, 10, 130)
 end
 
+ -- Creates coins off-screen randomly within the dimensions of the window.
 function createCoin()
- -- Creates coin off-screen randomly within the dimension of the window
   local x = love.math.random(800, 950)
   local y = love.math.random(0, love.graphics.getHeight() - 38)
   local coin = Coin(x, y)
   return coin
 end
 
+ -- Creates goomba off-screen randomly within the dimensions of the window.
 function createGoomba()
- -- Creates coin off-screen randomly within the dimension of the window
   local x = love.math.random(800, 1000)
   local y = love.math.random(0, love.graphics.getHeight() - 43)
   local goomba = Goomba(x, y)
   return goomba
 end
 
-function speedUp(entity, speed, dt)
-  entity.speed = entity.speed + speed * dt
+-- The player has its own speed independent of the speed of 
+-- coins and goombas for better balance. This function alters
+-- the player's speed, but can be used for any entity if necessary.
+function changeSpeed(entity, speed)
+  entity.speed = entity.speed + speed
 end
 
+-- Changes an entity's coordinates. Used for forcing the player
+-- into some set of specific coordinates, but could also be used
+-- for any other entity if necessary.
+function forceX(entity, number, dt)
+  entity.x = entity.x + number * dt
+end
+function forceY(entity, number, dt)
+  entity.y = entity.y + number * dt
+end
+
+-- Displays game info stats.
 function displayInfo(info, number, x, y)
-  -- Displays game info stats
   love.graphics.print(info .. ": " .. number, x, y)
 end
 
-function hud()
+-- Creates translucent background for game stats.
+function createHUD()
   love.graphics.setColor(0, 0, 0, 0.25)
   love.graphics.rectangle("fill", 5, 45, 121, 105)
   love.graphics.setColor(1, 1, 1)

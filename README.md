@@ -1,5 +1,37 @@
 # WIP
 
+6/19:
+
+Additions:
+
+- Refined the forced movement of the player to be smoother with better logic and new functions
+  forceX() and forceY().
+
+- Added comments to blocks of code without any comments.
+
+Adjustments:
+
+- Removed some miscellaneous unncecessary lines of code that were turned into comments.
+
+- Changed the placement of some blocks of code so that they aren't randomly scattered.
+
+- Reworded the wording of some comments.
+
+- Changed coinSpeed to objectSpeed to more accurately reflect its purpose and application.
+
+- Changed the name of function change
+
+- Removed the passive speed up of the player because it was kinda pointless.
+
+- Removed the reversal of the player color change to red because the player sometimes doesn't
+  fully turn red by the time the player collides with mario.
+ 
+- Changed the order in which every entity is drawn so that the player, coin, and goomba is draw
+  underneath the game stat HUD.
+  
+- Changed the name of function speedUp() to changeSpeed() to reflect that it can both increase and
+  decrease speed, as well as removed the dt parameter.
+
 6/18:
 
 Additions:
