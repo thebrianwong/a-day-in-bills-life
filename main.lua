@@ -6,6 +6,9 @@ function love.load()
   require "goomba"
   require "mario"
   require "background"
+  require "text"
+  
+  isTitleScreen = true
   
   -- Load images because their dimensions will be used for later
   -- calculations for background and mario.
@@ -63,6 +66,23 @@ function love.load()
 end
 
 function love.update(dt)
+  function love.keyreleased(key)
+    isTitleScreen = false
+  end
+  
+  -- When the background goes off-screen, it reappears off-screen
+  -- on the right to scroll again indefinitely.
+  for i,background in ipairs(backgroundTable) do
+    background:update(dt)
+    if background.x + background.width <= 0 then
+      background.x = 2 * background.width - backgroundSpeed
+    end
+  end
+  
+  if isTitleScreen then
+    return
+  end
+  
   player:update(dt)
   mario:update(dt)
   
@@ -105,15 +125,6 @@ function love.update(dt)
     speedBarrier = true
     if player.x >= 300 then
       forceX(player, -2500, dt)
-    end
-  end
-
-  -- When the background goes off-screen, it reappears off-screen
-  -- on the right to scroll again indefinitely.
-  for i,background in ipairs(backgroundTable) do
-    background:update(dt)
-    if background.x + background.width <= 0 then
-      background.x = 2 * background.width - backgroundSpeed
     end
   end
   
@@ -190,6 +201,24 @@ function love.update(dt)
 end
 
 function love.draw()
+  -- Sets the canvas background to blue as a solution for scrolling vertical bars.
+  -- This is the same blue as the scrolling background.
+  love.graphics.setBackgroundColor(40/255, 123/255, 241/255)
+  
+  -- Draws background images.
+  for i,background in ipairs(backgroundTable) do
+    background:draw()
+  end
+  
+  if isTitleScreen then
+    love.graphics.setColor(0, 0, 0, 0.50)
+    love.graphics.rectangle("fill", 20, 20, 760, 560)
+    love.graphics.setColor(1, 1, 1)
+    love.graphics.printf(textTitle, 310, 100, 150, "left", 0, 1.5, 1.5)
+    love.graphics.printf(textStory, 40, 140, 600, "left", 0, 1.05, 1.05)
+    return
+  end
+  
   -- Sets the canvas background to blue as a solution for scrolling vertical bars.
   -- This is the same blue as the scrolling background.
   love.graphics.setBackgroundColor(40/255, 123/255, 241/255)
