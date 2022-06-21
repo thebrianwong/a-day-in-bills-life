@@ -1,11 +1,22 @@
 # WIP
 
+6/20:
+
+Additions:
+
+- Added a title screen that that will contain the title and some story/instructions.
+
+- Created next text.lua file that will house all of the text that is displayed in the title screen and will also probably be later used in a result screen.
+
+Adjustments:
+
+- Moved the order of the background drawing block of code to before the title screen block of code so that the screen is scrolling even while in the title screen.
+
 6/19:
 
 Additions:
 
-- Refined the forced movement of the player to be smoother with better logic and new functions
-  forceX() and forceY().
+- Refined the forced movement of the player to be smoother with better logic and new functions forceX() and forceY().
 
 - Added comments to blocks of code without any comments.
 
@@ -36,14 +47,11 @@ Adjustments:
 
 Additions:
 
-- Created mario object that will scroll on screen once player hits 1500 speed. When player and mario collide,
-  they stop moving, coin and goomba stop respawning, and background stops scrolling. Player is forced into a
-  certain position on the screen once 1500 speed is hit. This functionality could be improved.
+- Created mario object that will scroll on screen once player hits 1500 speed. When player and mario collide, they stop moving, coin and goomba stop respawning, and     background stops scrolling. Player is forced into a certain position on the screen once 1500 speed is hit. This functionality could be improved.
 
 - Added a function where once player hits 1000 speed, they can't go past a certain part of the screen.
 
-- Made it so that player reverts from being as red when colliding with a goomba, albeit at a slower rate than
-  turning red.
+- Made it so that player reverts from being as red when colliding with a goomba, albeit at a slower rate than turning red.
   
 Adjustments:
 
@@ -55,10 +63,7 @@ Adjustments:
 
 Additions:
 
-- Created ability for player to gradually become red as it became faster. The change would happen with the 
-  new function call drawColor() in the player.lua file. A global variable playerColor is initalized to keep
-  track how red the player should be. This variable is passed to the new function to draw the player in a shade
-  of red. The variable changes when the player collides with a coin.
+- Created ability for player to gradually become red as it became faster. The change would happen with the new function call drawColor() in the player.lua file. A       global variable playerColor is initalized to keep track how red the player should be. This variable is passed to the new function to draw the player in a shade of     red. The variable changes when the player collides with a coin.
   
 Adjustments:
 
@@ -70,10 +75,7 @@ Adjustments:
 
 Additions:
 
-- Made bandage solution for scrolling black bars by setting the background color to be the same blue as the
-  scrolling background. Good solution in that it is only one line of code, but bad solution because there
-  is still some choppyness that adds up over time to the background images laying over each other. It is not
-  really noticeable because of how fast things are, but it it still something to consider.
+- Made bandage solution for scrolling black bars by setting the background color to be the same blue as the scrolling background. Good solution in that it is only one   line of code, but bad solution because there is still some choppyness that adds up over time to the background images laying over each other. It is not really         noticeable because of how fast things are, but it it still something to consider.
   - Still does not use dt in scrolling calculation because that screws up the overlapping even more.
   
 Adjustments:
@@ -88,13 +90,11 @@ Additions:
 
 - Added config file to force vsync on to address the next point
 
-- Got scrolling background closer to work, but has issue of weird black vertical line stutter.
-  Look online and turned vsync on but still has error.
+- Got scrolling background closer to work, but has issue of weird black vertical line stutter. Looked online and turned vsync on but still has error.
 
 Adjustments:
 
-- Changed the logic of the scrolling background so that their x coordinates get reset to to off screen,
-  instead of removing and adding a new object for the illusion of an infinite scrolling background.
+- Changed the logic of the scrolling background so that their x coordinates get reset to to off screen, instead of removing and adding a new object for the illusion of   an infinite scrolling background.
 
 6/14: followed new workflow
 
@@ -104,9 +104,7 @@ Additions:
 
 Adjustments:
 
-- Changed background from a static image to a moving image. Makings of a prototype work. Will finalize it
-  so that the background gets draw properly with correct coordinates. One fear is that they will move too
-  fast and there will be weird black choppy lines.
+- Changed background from a static image to a moving image. Makings of a prototype work. Will finalize it so that the background gets draw properly with correct         coordinates. One fear is that they will move too fast and there will be weird black choppy lines.
   
 - Corrected the function names of coin and goomba object files.
 
