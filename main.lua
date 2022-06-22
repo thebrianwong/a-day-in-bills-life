@@ -8,7 +8,11 @@ function love.load()
   require "background"
   require "text"
   
+  -- Starts game in the title screen.
   isTitleScreen = true
+  
+  -- Move to results screen after game ends.
+  isResultsScreen = false
   
   -- Load images because their dimensions will be used for later
   -- calculations for background and mario.
@@ -66,6 +70,7 @@ function love.load()
 end
 
 function love.update(dt)
+  -- Leave the title screen and start the game after pressing any key.
   function love.keyreleased(key)
     isTitleScreen = false
   end
@@ -79,7 +84,17 @@ function love.update(dt)
     end
   end
   
+  -- Ignore the game code while on the title screen.
   if isTitleScreen then
+    return
+  end
+  
+  -- Ignore the game code while on the result screen.
+  if isResultsScreen then
+    fade = 0
+    while fade < 1 do
+      fade = fade + 0.1 * dt
+    end
     return
   end
   
@@ -114,6 +129,7 @@ function love.update(dt)
     for i,background in ipairs(backgroundTable) do
       background.speed = 0
     end
+    isResultsScreen = true
   end
   
   -- Speed passively increases to contribute to sense of speed.
@@ -210,12 +226,21 @@ function love.draw()
     background:draw()
   end
   
+  -- Title screen.
   if isTitleScreen then
     love.graphics.setColor(0, 0, 0, 0.50)
     love.graphics.rectangle("fill", 20, 20, 760, 560)
     love.graphics.setColor(1, 1, 1)
-    love.graphics.printf(textTitle, 310, 100, 150, "left", 0, 1.5, 1.5)
-    love.graphics.printf(textStory, 40, 140, 600, "left", 0, 1.05, 1.05)
+    love.graphics.printf(textTitle, 322, 100, 150, "left", 0, 1.5, 1.5)
+    love.graphics.printf(textStory1, 40, 140, 690, "justify", 0, 1.05, 1.05)
+    love.graphics.printf(textStory2, 40, 300, 690, "left", 0, 1.05, 1.05)
+    love.graphics.printf(textControls, 235, 425, 290, "center", 0, 1.15, 1.15)
+    return
+  end
+  
+  -- Results screen.
+  if isResultsScreen then
+    love.graphics.clear(0, 0, 0, fade)
     return
   end
   
