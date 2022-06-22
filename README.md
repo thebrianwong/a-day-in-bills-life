@@ -1,5 +1,19 @@
 # WIP
 
+6/21:
+
+Additions:
+
+- Added some new comments.
+
+- Added new text to the title screen.
+
+- Started working on a results screen after the game ends.
+
+Adjustments:
+
+- Changed the placements of the text on the title screen to be better centered.
+
 6/20:
 
 Additions:
