@@ -6,6 +6,7 @@ function love.load()
   require "goomba"
   require "mario"
   require "background"
+  require "fade"
   require "text"
   
   -- Starts game in the title screen.
@@ -13,6 +14,7 @@ function love.load()
   
   -- Move to results screen after game ends.
   isResultsScreen = false
+  alpha = 0
   
   -- Load images because their dimensions will be used for later
   -- calculations for background and mario.
@@ -91,11 +93,15 @@ function love.update(dt)
   
   -- Ignore the game code while on the result screen.
   if isResultsScreen then
-    fade = 0
-    while fade < 1 do
-      fade = fade + 0.1 * dt
+    if alpha < 0.99 and isResultsScreen then
+      alpha = alpha + 0.5 * dt
     end
     return
+  end
+ function love.keyreleased(key)
+   if key == "up" and isResultsScreen then
+     isResultsScreen = false
+    end
   end
   
   player:update(dt)
@@ -238,16 +244,6 @@ function love.draw()
     return
   end
   
-  -- Results screen.
-  if isResultsScreen then
-    love.graphics.clear(0, 0, 0, fade)
-    return
-  end
-  
-  -- Sets the canvas background to blue as a solution for scrolling vertical bars.
-  -- This is the same blue as the scrolling background.
-  love.graphics.setBackgroundColor(40/255, 123/255, 241/255)
-  
   -- Draws background images.
   for i,background in ipairs(backgroundTable) do
     background:draw()
@@ -277,6 +273,18 @@ function love.draw()
   displayInfo("Missed", missedCoins, 10, 90)
   displayInfo("Current Streak", streakCoinsCurrent, 10, 110)
   displayInfo("Best Streak", streakCoinsBest, 10, 130)
+  
+  -- Results screen.
+  if isResultsScreen then
+    if alpha < 1 then
+      fadeIn(alpha)
+    end
+    if alpha > 0.9 then
+      love.graphics.printf(textTitle, 322, 100, 150, "left", 0, 1.5, 1.5)
+    end
+    print(isResultsScreen)
+    return
+  end
 end
 
  -- Creates coins off-screen randomly within the dimensions of the window.
@@ -321,5 +329,11 @@ end
 function createHUD()
   love.graphics.setColor(0, 0, 0, 0.25)
   love.graphics.rectangle("fill", 5, 45, 121, 105)
+  love.graphics.setColor(1, 1, 1)
+end
+
+function fadeIn(alpha)
+  love.graphics.setColor(0, 0, 0, alpha)
+  love.graphics.rectangle("fill", 0, 0, 800, 600)
   love.graphics.setColor(1, 1, 1)
 end
