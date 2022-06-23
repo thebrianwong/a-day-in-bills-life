@@ -1,5 +1,17 @@
 # WIP
 
+6/22:
+
+Additions:
+
+- Got started with creating a fade in to the results screen upon colliding with mario.
+
+Adjustments:
+
+- Removed old fade in prototype.
+
+- Removed duplicate block of code used to set background to blue to address vertical black bars issue.
+
 6/21:
 
 Additions:
