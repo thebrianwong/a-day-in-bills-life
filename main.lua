@@ -6,15 +6,17 @@ function love.load()
   require "goomba"
   require "mario"
   require "background"
-  require "fade"
   require "text"
   
   -- Starts game in the title screen.
   isTitleScreen = true
   
+  isGameScreen = false
+  
   -- Move to results screen after game ends.
   isResultsScreen = false
   alpha = 0
+  t = 0
   
   -- Load images because their dimensions will be used for later
   -- calculations for background and mario.
@@ -73,8 +75,11 @@ end
 
 function love.update(dt)
   -- Leave the title screen and start the game after pressing any key.
-  function love.keyreleased(key)
-    isTitleScreen = false
+  if isTitleScreen then
+    function love.keyreleased(key)
+      isTitleScreen = false
+      isGameScreen = true
+    end
   end
   
   -- When the background goes off-screen, it reappears off-screen
@@ -90,18 +95,17 @@ function love.update(dt)
   if isTitleScreen then
     return
   end
-  
+
+
   -- Ignore the game code while on the result screen.
   if isResultsScreen then
     if alpha < 0.99 and isResultsScreen then
       alpha = alpha + 0.5 * dt
     end
-    return
-  end
- function love.keyreleased(key)
-   if key == "up" and isResultsScreen then
-     isResultsScreen = false
+    if alpha > 0.95 then
+      t = t + 0.5 * dt
     end
+    return
   end
   
   player:update(dt)
@@ -135,6 +139,7 @@ function love.update(dt)
     for i,background in ipairs(backgroundTable) do
       background.speed = 0
     end
+    isGameScreen = false
     isResultsScreen = true
   end
   
@@ -207,15 +212,19 @@ function love.update(dt)
     end
   end
   
+-- EDIT THIS BACK TO 5 LATER!!!!!!!!!!!!!!!!!!!
+  
   -- While loop to ensure that there are always 5 coins present.
-  while #coinTable < 5 and (player:checkCollision(mario) == false) do
+  while #coinTable < 25 and (player:checkCollision(mario) == false) do
     coin = createCoin()
     coin.speed = objectSpeed
     table.insert(coinTable, coin)
   end
 
+-- EDIT THIS BACK TO 10 LATER!!!!!!!!!!!!!!!!!!!
+
   -- While loop to ensure that there are always 10 goombas present.
-  while #goombaTable < 10 and (player:checkCollision(mario) == false) do
+  while #goombaTable < 2 and (player:checkCollision(mario) == false) do
     goomba = createGoomba()
     goomba.speed = objectSpeed
     table.insert(goombaTable, goomba)
@@ -244,45 +253,68 @@ function love.draw()
     return
   end
   
-  -- Draws background images.
-  for i,background in ipairs(backgroundTable) do
-    background:draw()
-  end
+  if isGameScreen then
   
-  -- Draws all entities.
-  player:drawColor(playerColor)
-  mario:draw()
-  for i,coin in ipairs(coinTable) do
-    coin:draw()
-  end
-  for i,goomba in ipairs(goombaTable) do
-    goomba:rotateDraw()
-  end
-  
-  -- Draws translucent black box background for game stats.
-  createHUD()  
+    -- Draws all entities.
+    player:drawColor(playerColor)
+    mario:draw()
+    for i,coin in ipairs(coinTable) do
+      coin:draw()
+    end
+    for i,goomba in ipairs(goombaTable) do
+      goomba:rotateDraw()
+    end
+    
+    -- Draws translucent black box background for game stats.
+    createHUD()  
 
-  -- Speed counter to maintain a sense of speed. Speed value is for all entities,
-  -- not just for player. Speed value is formatted to only display 2 decimal places
-  -- because there are, at times, some floating point inprecision, and that would 
-  -- look weird to display.
-  displayInfo("Speed", string.format("%.2f",objectSpeed), 10, 50)
+    -- Speed counter to maintain a sense of speed. Speed value is for all entities,
+    -- not just for player. Speed value is formatted to only display 2 decimal places
+    -- because there are, at times, some floating point inprecision, and that would 
+    -- look weird to display.
+    displayInfo("Speed", string.format("%.2f",objectSpeed), 10, 50)
+    
+    -- Other fun miscellaneous game info.
+    displayInfo("Collected", collectedCoins, 10, 70)
+    displayInfo("Missed", missedCoins, 10, 90)
+    displayInfo("Current Streak", streakCoinsCurrent, 10, 110)
+    displayInfo("Best Streak", streakCoinsBest, 10, 130)
   
-  -- Other fun miscellaneous game info.
-  displayInfo("Collected", collectedCoins, 10, 70)
-  displayInfo("Missed", missedCoins, 10, 90)
-  displayInfo("Current Streak", streakCoinsCurrent, 10, 110)
-  displayInfo("Best Streak", streakCoinsBest, 10, 130)
+    return
+  end
   
   -- Results screen.
   if isResultsScreen then
     if alpha < 1 then
-      fadeIn(alpha)
+      fadeToBlack(alpha)
     end
-    if alpha > 0.9 then
-      love.graphics.printf(textTitle, 322, 100, 150, "left", 0, 1.5, 1.5)
+    if alpha > 0.95 then
+      love.graphics.printf("Results Screen", 322, 100, 150, "left", 0, 1.5, 1.5)
     end
-    print(isResultsScreen)
+    if t > 1 then
+      love.graphics.printf("You collected " .. collectedCoins .. " coins", 40, 140, 690, "left", 0, 1.05, 1.05)
+    end
+    if t > 2 then
+      love.graphics.printf("You missed " .. missedCoins .. " coins", 40, 300, 690, "left", 0, 1.05, 1.05)
+    end
+    if t > 3 then
+      if streakCoinsBest == 1 then
+        love.graphics.printf("The most coins you collected in a row was " .. streakCoinsBest .. " coin", 40, 425, 690, "left", 0, 1.105,        1.05)
+      else
+        love.graphics.printf("The most coins you collected in a row were " .. streakCoinsBest .. " coins", 40, 425, 690, "left", 0, 1.105,        1.05)
+      end
+    end
+    if t > 4 then
+      function love.keyreleased(key)
+        if key == "up" and isResultsScreen then
+          resetGameState()
+          isResultsScreen = false
+          isGameScreen = true
+          print(key)
+        end
+        print(key)
+      end
+    end
     return
   end
 end
@@ -332,8 +364,39 @@ function createHUD()
   love.graphics.setColor(1, 1, 1)
 end
 
-function fadeIn(alpha)
+-- Fade to black into results screen.
+function fadeToBlack(alpha)
   love.graphics.setColor(0, 0, 0, alpha)
   love.graphics.rectangle("fill", 0, 0, 800, 600)
   love.graphics.setColor(1, 1, 1)
+end
+
+-- Resets the values of all entities.
+function resetGameState()
+  alpha = 0
+  backgroundSpeed = 0.5
+  objectSpeed = 50
+  playerColor = 255
+  speedBarrier = false
+  t = 0
+  collectedCoins = 0
+  missedCoins = 0
+  streakCoinsCurrent = 0
+  streakCoinsBest = 0
+  player.x = 150
+  player.y = 250
+  player.speed = 100
+  mario.x = 900
+  mario.y = (love.graphics.getHeight() / 2) - (mario_image:getHeight() / 2)
+  mario.speed = 0
+  for i,coin in ipairs(coinTable) do
+    coin.x = love.math.random(800, 950)
+  end
+  for i,goomba in ipairs(goombaTable) do
+    goomba.x = love.math.random(800, 1000)
+    goomba.rotation = 0
+  end
+  for i,background in ipairs(backgroundTable) do
+    background.speed = backgroundSpeed
+  end
 end
