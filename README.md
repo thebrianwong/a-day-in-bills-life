@@ -1,5 +1,23 @@
 # WIP
 
+6/23:
+
+Additions:
+
+- Introduced isGameState variable to further keep track of game states.
+
+- Refined the fade to black to results screen feature.
+  - Renamed function fadeIn() to fadeToBlack().
+  - Results screen currently contains placeholder text with game stats.
+  
+Adjustments:
+ 
+ - Removed the require "fade" because it was leftover from experimenting with the fade feature.
+ 
+ - Changed the number of coins and goombas on screen to make testing faster.
+ 
+ - Put the actual game code in an if-statement for the new isGameState variable.
+
 6/22:
 
 Additions:
