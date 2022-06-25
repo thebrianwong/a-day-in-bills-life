@@ -8,6 +8,8 @@ function love.load()
   require "background"
   require "text"
   
+  crashed = false
+  
   -- Starts game in the title screen.
   isTitleScreen = true
   
@@ -74,14 +76,6 @@ function love.load()
 end
 
 function love.update(dt)
-  -- Leave the title screen and start the game after pressing any key.
-  if isTitleScreen then
-    function love.keyreleased(key)
-      isTitleScreen = false
-      isGameScreen = true
-    end
-  end
-  
   -- When the background goes off-screen, it reappears off-screen
   -- on the right to scroll again indefinitely.
   for i,background in ipairs(backgroundTable) do
@@ -139,8 +133,27 @@ function love.update(dt)
     for i,background in ipairs(backgroundTable) do
       background.speed = 0
     end
-    isGameScreen = false
-    isResultsScreen = true
+    --isGameScreen = false
+    --isResultsScreen = true
+    crashed = true
+  end
+  
+  if crashed == false then
+    if player.y < 0 then
+      player.y = 0
+    elseif player.y + player.height > love.graphics.getHeight() then
+      player.y = love.graphics.getHeight() - player.height
+    end
+  end
+  
+  if crashed then
+    if player.y > 0 and player.y < love.graphics.getWidth() then
+      forceY(player, 250, dt)
+      print(player.y)
+    elseif player.y >= love.graphics.getWidth() then
+      isGameScreen = false
+      isResultsScreen = true
+    end
   end
   
   -- Speed passively increases to contribute to sense of speed.
@@ -148,7 +161,7 @@ function love.update(dt)
   
   -- Limits the player's movement to the left side of the screen
   -- once 1000 speed is hit. Stuttering pushback is intentional.
-  if (objectSpeed > 1000 or speedBarrier) and (player:checkCollision(mario) == false) then
+  if (objectSpeed > 1000 or speedBarrier) and ((player:checkCollision(mario) == false) or crashed == false) then
     speedBarrier = true
     if player.x >= 300 then
       forceX(player, -2500, dt)
@@ -161,7 +174,7 @@ function love.update(dt)
     -- of preventing coin collision when the game ends with the 
     -- player being forced into specific coordinates to collide 
     -- with mario's nose.
-    if player:checkCollision(coin) and (player:checkCollision(mario) == false) then
+    if player:checkCollision(coin) and ((player:checkCollision(mario) == false) or crashed == false) then
       table.remove(coinTable, i)
       changeSpeed(player, 10)
       objectSpeed = objectSpeed + 10
@@ -191,7 +204,7 @@ function love.update(dt)
   for i,goomba in ipairs(goombaTable) do
     goomba:update(dt)
     -- Same reasoning for boolean as for coin.
-    if player:checkCollision(goomba) and (player:checkCollision(mario) == false) then
+    if player:checkCollision(goomba) and ((player:checkCollision(mario) == false) or crashed == false) then
       table.remove(goombaTable, i)
       if objectSpeed > 10 and (speedBarrier == false) then
         changeSpeed(player, -5)
@@ -215,7 +228,7 @@ function love.update(dt)
 -- EDIT THIS BACK TO 5 LATER!!!!!!!!!!!!!!!!!!!
   
   -- While loop to ensure that there are always 5 coins present.
-  while #coinTable < 25 and (player:checkCollision(mario) == false) do
+  while #coinTable < 25 and ((player:checkCollision(mario) == false) or crashed == false) do
     coin = createCoin()
     coin.speed = objectSpeed
     table.insert(coinTable, coin)
@@ -224,7 +237,7 @@ function love.update(dt)
 -- EDIT THIS BACK TO 10 LATER!!!!!!!!!!!!!!!!!!!
 
   -- While loop to ensure that there are always 10 goombas present.
-  while #goombaTable < 2 and (player:checkCollision(mario) == false) do
+  while #goombaTable < 2 and ((player:checkCollision(mario) == false) or crashed == false) do
     goomba = createGoomba()
     goomba.speed = objectSpeed
     table.insert(goombaTable, goomba)
@@ -250,11 +263,19 @@ function love.draw()
     love.graphics.printf(textStory1, 40, 140, 690, "justify", 0, 1.05, 1.05)
     love.graphics.printf(textStory2, 40, 300, 690, "left", 0, 1.05, 1.05)
     love.graphics.printf(textControls, 235, 425, 290, "center", 0, 1.15, 1.15)
+    
+    -- Leave the title screen and start the game after pressing any key.
+    function love.keypressed(key)
+      if isTitleScreen then
+        isTitleScreen = false
+        isGameScreen = true
+      end
+    end
+    
     return
   end
   
   if isGameScreen then
-  
     -- Draws all entities.
     player:drawColor(playerColor)
     mario:draw()
@@ -275,16 +296,17 @@ function love.draw()
     displayInfo("Speed", string.format("%.2f",objectSpeed), 10, 50)
     
     -- Other fun miscellaneous game info.
-    displayInfo("Collected", collectedCoins, 10, 70)
-    displayInfo("Missed", missedCoins, 10, 90)
-    displayInfo("Current Streak", streakCoinsCurrent, 10, 110)
-    displayInfo("Best Streak", streakCoinsBest, 10, 130)
+    displayInfo("Coins", collectedCoins, 10, 70)
+    --displayInfo("Missed", missedCoins, 10, 90)
+    --displayInfo("Current Streak", streakCoinsCurrent, 10, 110)
+    --displayInfo("Best Streak", streakCoinsBest, 10, 130)
   
     return
   end
   
   -- Results screen.
   if isResultsScreen then
+    print(t)
     if alpha < 1 then
       fadeToBlack(alpha)
     end
@@ -299,24 +321,24 @@ function love.draw()
     end
     if t > 3 then
       if streakCoinsBest == 1 then
-        love.graphics.printf("The most coins you collected in a row was " .. streakCoinsBest .. " coin", 40, 425, 690, "left", 0, 1.105,        1.05)
+        love.graphics.printf("The most coins you collected in a row was 1 coin", 40, 425, 690, "left", 0, 1.105, 1.05)
       else
         love.graphics.printf("The most coins you collected in a row were " .. streakCoinsBest .. " coins", 40, 425, 690, "left", 0, 1.105,        1.05)
       end
     end
-    if t > 4 then
-      function love.keyreleased(key)
-        if key == "up" and isResultsScreen then
-          resetGameState()
-          isResultsScreen = false
-          isGameScreen = true
-          print(key)
-        end
-        print(key)
+    
+    -- Leave the results screen and restart the game if spacebar is pressed after some time.
+    function love.keypressed(key)
+      if key == "space" and t > 4 then
+        resetGameState()
+        isResultsScreen = false
+        isGameScreen = true
       end
     end
+
     return
   end
+  
 end
 
  -- Creates coins off-screen randomly within the dimensions of the window.
@@ -360,7 +382,8 @@ end
 -- Creates translucent background for game stats.
 function createHUD()
   love.graphics.setColor(0, 0, 0, 0.25)
-  love.graphics.rectangle("fill", 5, 45, 121, 105)
+  --love.graphics.rectangle("fill", 5, 45, 121, 105)
+  love.graphics.rectangle("fill", 5, 45, 107, 45)
   love.graphics.setColor(1, 1, 1)
 end
 
@@ -375,6 +398,7 @@ end
 function resetGameState()
   alpha = 0
   backgroundSpeed = 0.5
+  crashed = false
   objectSpeed = 50
   playerColor = 255
   speedBarrier = false
