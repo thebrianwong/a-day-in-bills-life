@@ -1,5 +1,22 @@
 # WIP
 
+6/24:
+
+Additions:
+
+- Got the "press any key to start game" and "press spacebar to play again" features implemented with proper logic (no play again when results screen is still loading     on the 2nd playthrough).
+
+- Added the beginnings of a new part of the game where the player slides off-screen after crashing into mario.
+  - Introduced variable crash to keep track of this.
+  
+ Adjustments:
+ 
+- Adjusted HUD to now only display speed and collected coins so that the other stats will only be displayed in the results screen.
+
+  - Changed the wording from "Collected" to "Coins" to be more clear.
+  
+  - Made the black panel smaller due to these changes.
+
 6/23:
 
 Additions:

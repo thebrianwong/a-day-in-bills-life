@@ -34,9 +34,9 @@ function Player:update(dt)
   end
   
   -- Prevents the player from moving vertically off-screen.
-  if self.y < 0 then
-    self.y = 0
-  elseif self.y + self.height > love.graphics.getHeight() then
-    self.y = love.graphics.getHeight() - self.height
-  end
+ -- if self.y < 0 then
+ --   self.y = 0
+--  elseif self.y + self.height > love.graphics.getHeight() then
+--    self.y = love.graphics.getHeight() - self.height
+ -- end
 end
