@@ -1,5 +1,21 @@
 # WIP
 
+6/25:
+
+Additions:
+
+- Introduced feature where player will wait a few seconds after colliding mario to start falling down.
+
+  - Created variable timerCrashed to support this feature.
+
+Adjustments:
+
+- Renamed variable t to timerResultsScreen to keep track of when user can restart the game.
+
+- Changed the logic for objectSpeed to stop decreasing after colliding with mario.
+
+- Altered logic so that coins and goombas stop spawning and scrolling after player collides with mario.
+
 6/24:
 
 Additions:
