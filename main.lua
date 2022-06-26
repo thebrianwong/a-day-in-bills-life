@@ -18,7 +18,7 @@ function love.load()
   -- Move to results screen after game ends.
   isResultsScreen = false
   alpha = 0
-  t = 0
+  timerResultsScreen = 0
   
   -- Load images because their dimensions will be used for later
   -- calculations for background and mario.
@@ -33,6 +33,8 @@ function love.load()
   
   -- Determines if the player can move pass x coordinate 300.
   speedBarrier = false  
+  
+  timerCrashed = 0
   
   -- Global variable to keep track of the speed of coins and goombas.
   objectSpeed = 50
@@ -97,7 +99,7 @@ function love.update(dt)
       alpha = alpha + 0.5 * dt
     end
     if alpha > 0.95 then
-      t = t + 0.5 * dt
+      timerResultsScreen = timerResultsScreen + 0.5 * dt
     end
     return
   end
@@ -147,21 +149,25 @@ function love.update(dt)
   end
   
   if crashed then
-    if player.y > 0 and player.y < love.graphics.getWidth() then
-      forceY(player, 250, dt)
-      print(player.y)
-    elseif player.y >= love.graphics.getWidth() then
-      isGameScreen = false
-      isResultsScreen = true
+    timerCrashed = timerCrashed + 1 * dt
+    if timerCrashed > 2 then
+      if player.y > 0 and player.y < love.graphics.getWidth() then
+        forceY(player, 250, dt)
+      elseif player.y >= love.graphics.getWidth() then
+        isGameScreen = false
+        isResultsScreen = true
+      end
     end
   end
   
   -- Speed passively increases to contribute to sense of speed.
-  objectSpeed = objectSpeed + 0.5 * dt
+  if crashed == false then
+    objectSpeed = objectSpeed + 0.5 * dt
+  end
   
   -- Limits the player's movement to the left side of the screen
   -- once 1000 speed is hit. Stuttering pushback is intentional.
-  if (objectSpeed > 1000 or speedBarrier) and ((player:checkCollision(mario) == false) or crashed == false) then
+  if (objectSpeed > 1000 or speedBarrier) and crashed == false then
     speedBarrier = true
     if player.x >= 300 then
       forceX(player, -2500, dt)
@@ -174,7 +180,7 @@ function love.update(dt)
     -- of preventing coin collision when the game ends with the 
     -- player being forced into specific coordinates to collide 
     -- with mario's nose.
-    if player:checkCollision(coin) and ((player:checkCollision(mario) == false) or crashed == false) then
+    if player:checkCollision(coin) and objectSpeed < 1500 then
       table.remove(coinTable, i)
       changeSpeed(player, 10)
       objectSpeed = objectSpeed + 10
@@ -204,9 +210,9 @@ function love.update(dt)
   for i,goomba in ipairs(goombaTable) do
     goomba:update(dt)
     -- Same reasoning for boolean as for coin.
-    if player:checkCollision(goomba) and ((player:checkCollision(mario) == false) or crashed == false) then
+    if player:checkCollision(goomba) and objectSpeed < 1500 then
       table.remove(goombaTable, i)
-      if objectSpeed > 10 and (speedBarrier == false) then
+      if objectSpeed > 10 and speedBarrier == false then
         changeSpeed(player, -5)
         objectSpeed = objectSpeed - 5
         backgroundSpeed = backgroundSpeed - 0.0125
@@ -228,7 +234,7 @@ function love.update(dt)
 -- EDIT THIS BACK TO 5 LATER!!!!!!!!!!!!!!!!!!!
   
   -- While loop to ensure that there are always 5 coins present.
-  while #coinTable < 25 and ((player:checkCollision(mario) == false) or crashed == false) do
+  while #coinTable < 25 and crashed == false do
     coin = createCoin()
     coin.speed = objectSpeed
     table.insert(coinTable, coin)
@@ -237,7 +243,7 @@ function love.update(dt)
 -- EDIT THIS BACK TO 10 LATER!!!!!!!!!!!!!!!!!!!
 
   -- While loop to ensure that there are always 10 goombas present.
-  while #goombaTable < 2 and ((player:checkCollision(mario) == false) or crashed == false) do
+  while #goombaTable < 2 and crashed == false do
     goomba = createGoomba()
     goomba.speed = objectSpeed
     table.insert(goombaTable, goomba)
@@ -306,20 +312,19 @@ function love.draw()
   
   -- Results screen.
   if isResultsScreen then
-    print(t)
     if alpha < 1 then
       fadeToBlack(alpha)
     end
     if alpha > 0.95 then
       love.graphics.printf("Results Screen", 322, 100, 150, "left", 0, 1.5, 1.5)
     end
-    if t > 1 then
+    if timerResultsScreen > 1 then
       love.graphics.printf("You collected " .. collectedCoins .. " coins", 40, 140, 690, "left", 0, 1.05, 1.05)
     end
-    if t > 2 then
+    if timerResultsScreen > 2 then
       love.graphics.printf("You missed " .. missedCoins .. " coins", 40, 300, 690, "left", 0, 1.05, 1.05)
     end
-    if t > 3 then
+    if timerResultsScreen > 3 then
       if streakCoinsBest == 1 then
         love.graphics.printf("The most coins you collected in a row was 1 coin", 40, 425, 690, "left", 0, 1.105, 1.05)
       else
@@ -329,7 +334,7 @@ function love.draw()
     
     -- Leave the results screen and restart the game if spacebar is pressed after some time.
     function love.keypressed(key)
-      if key == "space" and t > 4 then
+      if key == "space" and timerResultsScreen > 4 then
         resetGameState()
         isResultsScreen = false
         isGameScreen = true
@@ -402,7 +407,8 @@ function resetGameState()
   objectSpeed = 50
   playerColor = 255
   speedBarrier = false
-  t = 0
+  timerResultsScreen = 0
+  timerCrashed = 0
   collectedCoins = 0
   missedCoins = 0
   streakCoinsCurrent = 0
