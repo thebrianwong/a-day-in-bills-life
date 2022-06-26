@@ -16,6 +16,8 @@ Additions:
   - Changed the wording from "Collected" to "Coins" to be more clear.
   
   - Made the black panel smaller due to these changes.
+  
+- Moved the code that prevents the player from moving off-screen from player.lua to main.lua, so that it can be disabled after colliding with mario.
 
 6/23:
 
