@@ -5,10 +5,10 @@ function Player:new(x, y)
   self.speed = 100
 end
 
-function Player:drawColor(color)
-  love.graphics.setColor(1, color/255, color/255)
+function Player:drawColor(color, opacity)
+  love.graphics.setColor(1, color/255, color/255, opacity/1)
   love.graphics.draw(self.image, self.x, self.y)
-  love.graphics.setColor(1, 1, 1)
+  love.graphics.setColor(1, 1, 1, 1)
 end
 
 function Player:update(dt)
