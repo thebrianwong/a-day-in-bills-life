@@ -8,16 +8,20 @@ function love.load()
   require "background"
   require "text"
   
+  -- Keeps track of if player has collided with mario.
   crashed = false
   
   -- Starts game in the title screen.
   isTitleScreen = true
   
+  -- Keeps track of if game is running in game state.
   isGameScreen = false
   
   -- Move to results screen after game ends.
   isResultsScreen = false
-  alpha = 0
+  
+  -- Variables used for results screen logic.
+  resultsScreenOpacity = 0
   timerResultsScreen = 0
   
   -- Load images because their dimensions will be used for later
@@ -28,22 +32,31 @@ function love.load()
   -- Keeps track of the scrolling speed of the background.
   backgroundSpeed = 0.5
   
-  -- Used to alter player color as speed increases and coins collected.
+  -- Used to alter player appearance.
   playerColor = 255
+  playerOpacity = 1
   
-  -- Determines if the player can move pass x coordinate 300.
+  -- Determines if the player has restricted horizontal movement.
   speedBarrier = false  
   
+  -- Timer to keep track of time since player collided with mario.
   timerCrashed = 0
   
-  -- Global variable to keep track of the speed of coins and goombas.
+  -- Timer to keep track of when mario moves left off-screen.
+  timerMario = 0
+  
+  -- Determines speed of coins, goombas, and mario.
   objectSpeed = 50
   
-  -- Initializes stat variables to keep track of game instance info.
+  -- Keep track of game stats.
   collectedCoins = 0
   missedCoins = 0
   streakCoinsCurrent = 0
   streakCoinsBest = 0
+  hitGoombas = 0
+  avoidedGoombas = 0
+  streakGoombasCurrent = 0
+  streakGoombasBest = 0
   
   -- Spawns multiple instances of the background on and off-screen to scroll.
   backgroundTable = {}
@@ -95,11 +108,11 @@ function love.update(dt)
 
   -- Ignore the game code while on the result screen.
   if isResultsScreen then
-    if alpha < 0.99 and isResultsScreen then
-      alpha = alpha + 0.5 * dt
+    if resultsScreenOpacity < 0.99 and isResultsScreen then
+      resultsScreenOpacity = resultsScreenOpacity + 0.5 * dt
     end
-    if alpha > 0.95 then
-      timerResultsScreen = timerResultsScreen + 0.5 * dt
+    if resultsScreenOpacity > 0.95 then
+      timerResultsScreen = timerResultsScreen + 1 * dt
     end
     return
   end
@@ -111,7 +124,7 @@ function love.update(dt)
   -- the movement of player, and the player is forced to the 
   -- approximate coordinates of (300, 186). Mario starts scrolling
   -- once that happens. The coordinates line up with mario's nose.
-  if objectSpeed > 1500 then
+  if objectSpeed > 1500 and crashed == false then
     player.speed = 0
     if player.x > 302 then
       forceX(player, -100, dt)
@@ -124,7 +137,13 @@ function love.update(dt)
       forceY(player, 100, dt)
     end
     if (player.x >= 298 and player.x <= 302) and (player.y >= 184 and player.y <= 188) then
-      mario.speed = objectSpeed
+      timerMario = timerMario + 1 * dt
+      if timerMario > 2 then
+        mario.speed = objectSpeed
+        if mario.x > 370 and mario.x < 385 then
+          mario.x = player.x + player.width - 0.1
+        end
+      end
     end
   end
   
@@ -135,11 +154,10 @@ function love.update(dt)
     for i,background in ipairs(backgroundTable) do
       background.speed = 0
     end
-    --isGameScreen = false
-    --isResultsScreen = true
     crashed = true
   end
   
+  -- Prevents player from moving off-screen
   if crashed == false then
     if player.y < 0 then
       player.y = 0
@@ -150,12 +168,17 @@ function love.update(dt)
   
   if crashed then
     timerCrashed = timerCrashed + 1 * dt
-    if timerCrashed > 2 then
+    playerColor = playerColor + 300 * dt
+    if timerCrashed > 2.25 then
       if player.y > 0 and player.y < love.graphics.getWidth() then
         forceY(player, 250, dt)
+        playerOpacity = playerOpacity - 0.65 * dt
       elseif player.y >= love.graphics.getWidth() then
-        isGameScreen = false
-        isResultsScreen = true
+        forceX(mario, -350, dt)
+        if mario.x + mario.width < 0 then
+          isGameScreen = false
+          isResultsScreen = true
+        end
       end
     end
   end
@@ -218,7 +241,8 @@ function love.update(dt)
         backgroundSpeed = backgroundSpeed - 0.0125
       end
       -- Updates game stats (save for potential goomba stats)
-  --    collectedCoins = collectedCoins + 1
+      hitGoombas = hitGoombas + 1
+      streakGoombasCurrent = 0
   --    streakCoinsCurrent = streakCoinsCurrent + 1
   --    if streakCoinsCurrent > streakCoinsBest then
    --     streakCoinsBest = streakCoinsCurrent
@@ -228,13 +252,18 @@ function love.update(dt)
     -- Goomba despawns upon hitting the left side of the screen.
     if goomba.x < 0 then
       table.remove(goombaTable, i)
+      avoidedGoombas = avoidedGoombas + 1
+      streakGoombasCurrent = streakGoombasCurrent + 1
+      if streakGoombasCurrent > streakGoombasBest then
+        streakGoombasBest = streakGoombasBest + 1
+      end
     end
   end
   
 -- EDIT THIS BACK TO 5 LATER!!!!!!!!!!!!!!!!!!!
   
   -- While loop to ensure that there are always 5 coins present.
-  while #coinTable < 25 and crashed == false do
+  while #coinTable < 25 and objectSpeed < 1500 do
     coin = createCoin()
     coin.speed = objectSpeed
     table.insert(coinTable, coin)
@@ -243,7 +272,7 @@ function love.update(dt)
 -- EDIT THIS BACK TO 10 LATER!!!!!!!!!!!!!!!!!!!
 
   -- While loop to ensure that there are always 10 goombas present.
-  while #goombaTable < 2 and crashed == false do
+  while #goombaTable < 2 and objectSpeed < 1500 do
     goomba = createGoomba()
     goomba.speed = objectSpeed
     table.insert(goombaTable, goomba)
@@ -283,7 +312,7 @@ function love.draw()
   
   if isGameScreen then
     -- Draws all entities.
-    player:drawColor(playerColor)
+    player:drawColor(playerColor, playerOpacity)
     mario:draw()
     for i,coin in ipairs(coinTable) do
       coin:draw()
@@ -293,18 +322,21 @@ function love.draw()
     end
     
     -- Draws translucent black box background for game stats.
-    createHUD()  
+    if objectSpeed < 1500 then
+      createHUD()
+      displayInfo("Speed", string.format("%.2f",objectSpeed), 10, 50)
+      displayInfo("Coins", collectedCoins, 10, 70)
+    end
 
     -- Speed counter to maintain a sense of speed. Speed value is for all entities,
     -- not just for player. Speed value is formatted to only display 2 decimal places
     -- because there are, at times, some floating point inprecision, and that would 
     -- look weird to display.
-    displayInfo("Speed", string.format("%.2f",objectSpeed), 10, 50)
+    --displayInfo("Speed", string.format("%.2f",objectSpeed), 10, 50)
     
     -- Other fun miscellaneous game info.
-    displayInfo("Coins", collectedCoins, 10, 70)
+    --displayInfo("Coins", collectedCoins, 10, 70)
     --displayInfo("Missed", missedCoins, 10, 90)
-    --displayInfo("Current Streak", streakCoinsCurrent, 10, 110)
     --displayInfo("Best Streak", streakCoinsBest, 10, 130)
   
     return
@@ -312,19 +344,19 @@ function love.draw()
   
   -- Results screen.
   if isResultsScreen then
-    if alpha < 1 then
-      fadeToBlack(alpha)
-    end
-    if alpha > 0.95 then
-      love.graphics.printf("Results Screen", 322, 100, 150, "left", 0, 1.5, 1.5)
+    if resultsScreenOpacity < 1 then
+      fadeToBlack(resultsScreenOpacity)
     end
     if timerResultsScreen > 1 then
-      love.graphics.printf("You collected " .. collectedCoins .. " coins", 40, 140, 690, "left", 0, 1.05, 1.05)
+      love.graphics.printf("Results Screen", 322, 100, 150, "left", 0, 1.5, 1.5)
     end
     if timerResultsScreen > 2 then
-      love.graphics.printf("You missed " .. missedCoins .. " coins", 40, 300, 690, "left", 0, 1.05, 1.05)
+      love.graphics.printf("You collected " .. collectedCoins .. " coins", 40, 140, 690, "left", 0, 1.05, 1.05)
     end
     if timerResultsScreen > 3 then
+      love.graphics.printf("You missed " .. missedCoins .. " coins", 40, 300, 690, "left", 0, 1.05, 1.05)
+    end
+    if timerResultsScreen > 4 then
       if streakCoinsBest == 1 then
         love.graphics.printf("The most coins you collected in a row was 1 coin", 40, 425, 690, "left", 0, 1.105, 1.05)
       else
@@ -348,7 +380,7 @@ end
 
  -- Creates coins off-screen randomly within the dimensions of the window.
 function createCoin()
-  local x = love.math.random(800, 950)
+  local x = love.math.random(love.graphics.getWidth(), love.graphics.getWidth() + 200)
   local y = love.math.random(0, love.graphics.getHeight() - 38)
   local coin = Coin(x, y)
   return coin
@@ -356,7 +388,7 @@ end
 
  -- Creates goomba off-screen randomly within the dimensions of the window.
 function createGoomba()
-  local x = love.math.random(800, 1000)
+  local x = love.math.random(love.graphics.getWidth(), love.graphics.getWidth() + 200)
   local y = love.math.random(0, love.graphics.getHeight() - 43)
   local goomba = Goomba(x, y)
   return goomba
@@ -395,24 +427,30 @@ end
 -- Fade to black into results screen.
 function fadeToBlack(alpha)
   love.graphics.setColor(0, 0, 0, alpha)
-  love.graphics.rectangle("fill", 0, 0, 800, 600)
+  love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
   love.graphics.setColor(1, 1, 1)
 end
 
 -- Resets the values of all entities.
 function resetGameState()
-  alpha = 0
+  resultsScreenOpacity = 0
   backgroundSpeed = 0.5
   crashed = false
   objectSpeed = 50
   playerColor = 255
+  playerOpacity = 1
   speedBarrier = false
   timerResultsScreen = 0
+  timerMario = 0
   timerCrashed = 0
   collectedCoins = 0
   missedCoins = 0
   streakCoinsCurrent = 0
   streakCoinsBest = 0
+  hitGoombas = 0
+  avoidedGoombas = 0
+  streakGoombasCurrent = 0
+  streakGoombasBest = 0
   player.x = 150
   player.y = 250
   player.speed = 100
@@ -420,10 +458,10 @@ function resetGameState()
   mario.y = (love.graphics.getHeight() / 2) - (mario_image:getHeight() / 2)
   mario.speed = 0
   for i,coin in ipairs(coinTable) do
-    coin.x = love.math.random(800, 950)
+    coin.x = love.math.random(love.graphics.getWidth(), love.graphics.getWidth() + 200)
   end
   for i,goomba in ipairs(goombaTable) do
-    goomba.x = love.math.random(800, 1000)
+    goomba.x = love.math.random(love.graphics.getWidth(), love.graphics.getWidth() + 200)
     goomba.rotation = 0
   end
   for i,background in ipairs(backgroundTable) do
