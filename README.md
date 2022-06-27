@@ -1,5 +1,35 @@
 # WIP
 
+6/26:
+
+Additions:
+
+- Added and updated some comments.
+
+- Made the player turn from red back to normal color after colliding with mario.
+
+  - Changed player.lua draw parameters to support this feature.
+
+- Made the player fade away after colliding with mario.
+
+  - Created variable playerOpacity to support this feature.
+  
+- Added game stats support for goombas that is similar to coins.
+
+  - Created multiple variables to support this feature.
+  
+Adjustments:
+
+- Moved speed properties from objects, except player, to entity.lua.
+
+- Adjusted the results screen timing.
+
+- Renamed variable alpha to resultsScreenOpacity.
+
+- Changed the horizontal spawning zone of coins and goombas to be wider, and to not use explicit window dimensions.
+
+- Changed HUD to stop appearing once player loses control.
+
 6/25:
 
 Additions:
