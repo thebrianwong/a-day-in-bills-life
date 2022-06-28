@@ -1,5 +1,19 @@
 # WIP
 
+6/27:
+
+Additions:
+
+- Added some new comments.
+
+Adjustments:
+
+- Reworded multiple comments.
+
+- Reorganized the placement of blocks of code to have a more logical layout.
+
+- Cleaned up and removed some unnecessary bits of code.
+
 6/26:
 
 Additions:
