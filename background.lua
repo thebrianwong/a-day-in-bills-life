@@ -5,5 +5,5 @@ function Background:new(x, y)
 end
   
 function Background:update(dt)
-  self.x = self.x - self.speed
+  self.x = self.x - self.speed * dt
 end
