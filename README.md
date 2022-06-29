@@ -1,5 +1,17 @@
 # WIP
 
+6/28:
+
+Additions: 
+
+- None.
+
+Adjustments:
+
+- Changed background to utilize dt when calculating movement. (Solution was changing the order so that the check to move the left off-screen background image to the     right off-screen before scrolling to the left)
+
+  - Changed backgroundSpeed value and relevant calculations to account for this shift.
+
 6/27:
 
 Additions:
