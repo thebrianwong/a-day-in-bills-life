@@ -36,7 +36,7 @@ function love.load()
   mario_image = love.graphics.newImage("mario.png")
   
   -- Used to calculate how fast different aspects of the game scroll and move.
-  backgroundSpeed = 0.5
+  backgroundSpeed = 20
   objectSpeed = 50
   
   -- Dictates flow and logic of gameplay.
@@ -77,10 +77,11 @@ end
 function love.update(dt)
   -- Creates an infinitely scrolling background. Allows for scrolling even on the title screen.
   for i,background in ipairs(backgroundTable) do
-    background:update(dt)
+    --background:update(dt)
     if background.x + background.width <= 0 then
-      background.x = 2 * background.width - backgroundSpeed
+      background.x = 2 * background.width
     end
+    background:update(dt)
   end
   
   -- Ignores the below code while on the title screen.
@@ -108,7 +109,7 @@ function love.update(dt)
       table.remove(coinTable, i)
       changeSpeed(player, 10)
       objectSpeed = objectSpeed + 10
-      backgroundSpeed = backgroundSpeed + 0.025
+      backgroundSpeed = backgroundSpeed + 8
       if objectSpeed > 750 and playerColor >= 3 then
         playerColor = playerColor - 3
       end
@@ -139,7 +140,7 @@ function love.update(dt)
       if objectSpeed > 10 and speedBarrier == false then
         changeSpeed(player, -5)
         objectSpeed = objectSpeed - 5
-        backgroundSpeed = backgroundSpeed - 0.0125
+        backgroundSpeed = backgroundSpeed - 4
       end
       hitGoombas = hitGoombas + 1
       streakGoombasCurrent = 0
@@ -380,7 +381,7 @@ end
 -- Resets the values of all entities.
 function resetGameState()
   resultsScreenOpacity = 0
-  backgroundSpeed = 0.5
+  backgroundSpeed = 20
   crashed = false
   objectSpeed = 50
   playerColor = 255
