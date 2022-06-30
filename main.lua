@@ -55,7 +55,7 @@ function love.load()
   
   -- Spawns the background, coins, and goombas.
   backgroundTable = {}
-  for i = 0, 2 do
+  for i = 0, 1 do
     for j = 0, 2 do
       background = Background(j * background_image:getWidth(), i * background_image:getHeight())
       background.speed = backgroundSpeed
@@ -77,9 +77,21 @@ end
 function love.update(dt)
   -- Creates an infinitely scrolling background. Allows for scrolling even on the title screen.
   for i,background in ipairs(backgroundTable) do
-    --background:update(dt)
-    if background.x + background.width <= 0 then
-      background.x = 2 * background.width
+    if background.x + background.width < 0 then
+      if i == 1 then
+        background.x = backgroundTable[3].x + background.width
+      elseif i == 2 then
+        background.x = backgroundTable[1].x + background.width
+      elseif i == 3 then
+        background.x = backgroundTable[2].x + background.width
+      end
+      if i == 4 then
+        background.x = backgroundTable[6].x + background.width
+      elseif i == 5 then
+        background.x = backgroundTable[4].x + background.width
+      elseif i == 6 then
+        background.x = backgroundTable[5].x + background.width
+      end
     end
     background:update(dt)
   end
@@ -254,7 +266,7 @@ end
 
 function love.draw()
   -- Sets the canvas background to blue as a solution for scrolling vertical bars. This is the same blue as the scrolling background.
-  love.graphics.setBackgroundColor(40/255, 123/255, 241/255)
+  --love.graphics.setBackgroundColor(40/255, 123/255, 241/255)
   
   -- Draws background images.
   for i,background in ipairs(backgroundTable) do
@@ -289,21 +301,34 @@ function love.draw()
       love.graphics.printf("Results Screen", 322, 100, 150, "left", 0, 1.5, 1.5)
     end
     if timerResultsScreen > 2 then
-      love.graphics.printf("You collected " .. collectedCoins .. " coins", 40, 140, 690, "left", 0, 1.05, 1.05)
+      love.graphics.draw(coin.image, 700, 160)
+      if collectedCoins == 1 then
+        love.graphics.printf("You collected 1 coin", 40, 160, 690, "left", 0, 1.05, 1.05)
+      else
+        love.graphics.printf("You collected " .. collectedCoins .. " coins", 40, 160, 690, "left", 0, 1.05, 1.05)
+      end
     end
     if timerResultsScreen > 3 then
-      love.graphics.printf("You missed " .. missedCoins .. " coins", 40, 300, 690, "left", 0, 1.05, 1.05)
+      if missedCoins == 1 then
+        love.graphics.printf("You missed 1 coin", 40, 180, 690, "left", 0, 1.05, 1.05)
+      else
+        love.graphics.printf("You missed " .. missedCoins .. " coins", 40, 180, 690, "left", 0, 1.05, 1.05)
+      end
     end
     if timerResultsScreen > 4 then
       if streakCoinsBest == 1 then
-        love.graphics.printf("The most coins you collected in a row was 1 coin", 40, 425, 690, "left", 0, 1.105, 1.05)
+        love.graphics.printf("The most coins you collected in a row was 1 coin", 40, 200, 690, "left", 0, 1.105, 1.05)
       else
-        love.graphics.printf("The most coins you collected in a row were " .. streakCoinsBest .. " coins", 40, 425, 690, "left", 0, 1.105,        1.05)
+        love.graphics.printf("The most coins you collected in a row were " .. streakCoinsBest .. " coins", 40, 200, 690, "left", 0, 1.105,        1.05)
       end
+    end
+    if timerResultsScreen > 5 then 
+      love.graphics.draw(goomba.image, 700, 260)
+      love.graphics.printf("You hit " .. hitGoombas .. " goombas", 40, 260, 690, "left", 0, 1.05, 1.05)
     end
     -- Leave the results screen and restart the game if spacebar is pressed.
     function love.keypressed(key)
-      if key == "space" and timerResultsScreen > 4 then
+      if key == "space" and timerResultsScreen > 6 then
         resetGameState()
         isResultsScreen = false
         isGameScreen = true
