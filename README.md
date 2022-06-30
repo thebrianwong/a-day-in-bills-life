@@ -1,5 +1,19 @@
 # WIP
 
+6/29:
+
+Additions:
+
+- Started adding goomba game stats to the results screen.
+
+Adjustments:
+
+- Finally solved the issue of scrolling background with black vertical bars. (Solution was to make the leftmost tiles respawn at the x coordinates of the right side of   the rightmost tiles. Before, the tiles would always go to double the width of a tile, which was the starting point of the right side of the rightmost tiles. The       problem with this is that because the leftmost tiles don't go completely off-screen at exactly x coordinate 0, the rightmost tiles won't be exactly lined up with       that starting position. This creates the black vertical bars, which are really just gaps in between each background tile)
+
+- Adjusted the results screen stats to take into account the unlikely possibility that the user has any stat of 1 coin.
+
+- Reduced the row of background tiles by 1 from 2 after realizing that that was extra tiles and pointless.
+
 6/28:
 
 Additions: 
