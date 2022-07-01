@@ -278,9 +278,9 @@ function love.draw()
     love.graphics.setColor(0, 0, 0, 0.50)
     love.graphics.rectangle("fill", 20, 20, 760, 560)
     love.graphics.setColor(1, 1, 1)
-    love.graphics.printf(textTitle, 322, 100, 150, "left", 0, 1.5, 1.5)
-    love.graphics.printf(textStory1, 40, 140, 690, "justify", 0, 1.05, 1.05)
-    love.graphics.printf(textStory2, 40, 300, 690, "left", 0, 1.05, 1.05)
+    love.graphics.printf(textTitle, 322, 75, 150, "left", 0, 1.5, 1.5)
+    love.graphics.printf(textStory1, 40, 150, 690, "justify", 0, 1.05, 1.05)
+    love.graphics.printf(textStory2, 40, 320, 690, "left", 0, 1.05, 1.05)
     love.graphics.printf(textControls, 235, 425, 290, "center", 0, 1.15, 1.15)
     -- Leave the title screen and start the game after pressing any key.
     function love.keypressed(key)
@@ -298,37 +298,68 @@ function love.draw()
       fadeToBlack(resultsScreenOpacity)
     end
     if timerResultsScreen > 1 then
-      love.graphics.printf("Results Screen", 322, 100, 150, "left", 0, 1.5, 1.5)
+      love.graphics.printf("Results Screen", 322, 75, 150, "left", 0, 1.5, 1.5)
     end
     if timerResultsScreen > 2 then
-      love.graphics.draw(coin.image, 700, 160)
+      love.graphics.draw(coin.image, 700, 135)
       if collectedCoins == 1 then
-        love.graphics.printf("You collected 1 coin", 40, 160, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You collected 1 coin", 40, 135, 690, "left", 0, 1.05, 1.05)
       else
-        love.graphics.printf("You collected " .. collectedCoins .. " coins", 40, 160, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You collected " .. collectedCoins .. " coins", 40, 135, 690, "left", 0, 1.05, 1.05)
       end
     end
     if timerResultsScreen > 3 then
       if missedCoins == 1 then
-        love.graphics.printf("You missed 1 coin", 40, 180, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You missed 1 coin", 40, 155, 690, "left", 0, 1.05, 1.05)
       else
-        love.graphics.printf("You missed " .. missedCoins .. " coins", 40, 180, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You missed " .. missedCoins .. " coins", 40, 155, 690, "left", 0, 1.05, 1.05)
       end
     end
     if timerResultsScreen > 4 then
       if streakCoinsBest == 1 then
-        love.graphics.printf("The most coins you collected in a row was 1 coin", 40, 200, 690, "left", 0, 1.105, 1.05)
+        love.graphics.printf("The most coins you collected in a row was 1 coin", 40, 175, 690, "left", 0, 1.105, 1.05)
       else
-        love.graphics.printf("The most coins you collected in a row were " .. streakCoinsBest .. " coins", 40, 200, 690, "left", 0, 1.105,        1.05)
+        love.graphics.printf("The most coins you collected in a row were " .. streakCoinsBest .. " coins", 40, 175, 690, "left", 0, 1.105,        1.05)
       end
     end
-    if timerResultsScreen > 5 then 
-      love.graphics.draw(goomba.image, 700, 260)
-      love.graphics.printf("You hit " .. hitGoombas .. " goombas", 40, 260, 690, "left", 0, 1.05, 1.05)
+    if timerResultsScreen > 5 then
+      love.graphics.draw(goomba.image, 697, 235)
+      if hitGoombas == 1 then
+        love.graphics.printf("You hit 1 \"goomba\"", 40, 235, 690, "left", 0, 1.05, 1.05)
+      else
+        love.graphics.printf("You hit " .. hitGoombas .. " \"goombas\"", 40, 235, 690, "left", 0, 1.05, 1.05)
+      end
+    end
+    if timerResultsScreen > 6 then
+      if avoidedGoombas == 1 then
+        love.graphics.printf("You avoided 1 \"goomba\"", 40, 255, 690, "left", 0, 1.05, 1.05)
+      else
+        love.graphics.printf("You avoided " .. avoidedGoombas .. " \"goombas\"", 40, 255, 690, "left", 0, 1.05, 1.05)
+      end
+    end
+    if timerResultsScreen > 7 then
+      if streakGoombasBest == 1 then
+        love.graphics.printf("The most goombas you avoided in a row was 1 \"goomba\"", 40, 275, 690, "left", 0, 1.05, 1.05)
+      else
+        love.graphics.printf("The most goombas you avoided in a row were " .. streakGoombasBest .. " \"goombas\"", 40, 275, 690, "left", 0        , 1.05, 1.05)
+      end
+    end
+    if timerResultsScreen > 8 then
+      love.graphics.draw(player.image, 685, 340)
+      love.graphics.printf("The damage you dealt to \"Mario\" was 0", 40, 335, 690, "left", 0, 1.05, 1.05)
+    end
+    if timerResultsScreen > 9 then
+      love.graphics.printf("Your chances of survival are 100%", 40, 355, 690, "left", 0, 1.05, 1.05)
+    end
+    if timerResultsScreen > 10 then
+      love.graphics.printf("The probablity your manager will still schedule you for a shift tomorrow is 100%", 40, 375, 690, "left", 0,      1.05, 1.05)
+    end
+    if timerResultsScreen > 11 then
+      love.graphics.printf("The likelihood that you'll ever make it on the big screen is still 0%", 40, 395, 690, "left", 0, 1.05, 1.05)
     end
     -- Leave the results screen and restart the game if spacebar is pressed.
     function love.keypressed(key)
-      if key == "space" and timerResultsScreen > 6 then
+      if key == "space" and timerResultsScreen > 10 then
         resetGameState()
         isResultsScreen = false
         isGameScreen = true
@@ -398,7 +429,7 @@ end
 
 -- Fade to black into results screen.
 function fadeToBlack(alpha)
-  love.graphics.setColor(0, 0, 0, alpha)
+  love.graphics.setColor(30/255, 30/255, 30/255, alpha)
   love.graphics.rectangle("fill", 0, 0, love.graphics.getWidth(), love.graphics.getHeight())
   love.graphics.setColor(1, 1, 1)
 end
