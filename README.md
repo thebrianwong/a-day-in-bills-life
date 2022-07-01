@@ -1,5 +1,19 @@
 # WIP
 
+6/30:
+
+Additions:
+
+- Added goomba stats and player "stats" in the results screen.
+
+Adjustments:
+
+- Slightly modified the end of the title screen story.
+
+- Adjusted the results screen color to not be completely black so that the player sprite stands out better.
+
+- Made the pre-existing messages on the title screen and results screen to be slightly higher up on the screen.
+
 6/29:
 
 Additions:
