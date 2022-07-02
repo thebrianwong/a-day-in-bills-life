@@ -298,7 +298,7 @@ function love.draw()
       fadeToBlack(resultsScreenOpacity)
     end
     if timerResultsScreen > 1 then
-      love.graphics.printf("Results Screen", 322, 75, 150, "left", 0, 1.5, 1.5)
+      love.graphics.printf("Results Screen", 332, 75, 150, "left", 0, 1.5, 1.5)
     end
     if timerResultsScreen > 2 then
       love.graphics.draw(coin.image, 700, 135)
@@ -317,31 +317,31 @@ function love.draw()
     end
     if timerResultsScreen > 4 then
       if streakCoinsBest == 1 then
-        love.graphics.printf("The most coins you collected in a row was 1 coin", 40, 175, 690, "left", 0, 1.105, 1.05)
+        love.graphics.printf("The most coins you collected in a row was 1 coin", 40, 175, 690, "left", 0, 1.05, 1.05)
       else
-        love.graphics.printf("The most coins you collected in a row were " .. streakCoinsBest .. " coins", 40, 175, 690, "left", 0, 1.105,        1.05)
+        love.graphics.printf("The most coins you collected in a row were " .. streakCoinsBest .. " coins", 40, 175, 690, "left", 0, 1.05, 1.05)
       end
     end
     if timerResultsScreen > 5 then
       love.graphics.draw(goomba.image, 697, 235)
-      if hitGoombas == 1 then
-        love.graphics.printf("You hit 1 \"goomba\"", 40, 235, 690, "left", 0, 1.05, 1.05)
+      if avoidedGoombas == 1 then
+        love.graphics.printf("You avoided 1 \"goomba\"", 40, 235, 690, "left", 0, 1.05, 1.05)
       else
-        love.graphics.printf("You hit " .. hitGoombas .. " \"goombas\"", 40, 235, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You avoided " .. avoidedGoombas .. " \"goombas\"", 40, 235, 690, "left", 0, 1.05, 1.05)
       end
     end
     if timerResultsScreen > 6 then
-      if avoidedGoombas == 1 then
-        love.graphics.printf("You avoided 1 \"goomba\"", 40, 255, 690, "left", 0, 1.05, 1.05)
+      if hitGoombas == 1 then
+        love.graphics.printf("You hit 1 \"goomba\"", 40, 255, 690, "left", 0, 1.05, 1.05)
       else
-        love.graphics.printf("You avoided " .. avoidedGoombas .. " \"goombas\"", 40, 255, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You hit " .. hitGoombas .. " \"goombas\"", 40, 255, 690, "left", 0, 1.05, 1.05)
       end
     end
     if timerResultsScreen > 7 then
       if streakGoombasBest == 1 then
-        love.graphics.printf("The most goombas you avoided in a row was 1 \"goomba\"", 40, 275, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("The most \"goombas\" you avoided in a row was 1 \"goomba\"", 40, 275, 690, "left", 0, 1.05, 1.05)
       else
-        love.graphics.printf("The most goombas you avoided in a row were " .. streakGoombasBest .. " \"goombas\"", 40, 275, 690, "left", 0        , 1.05, 1.05)
+        love.graphics.printf("The most \"goombas\" you avoided in a row were " .. streakGoombasBest .. " \"goombas\"", 40, 275, 690, "left", 0 , 1.05, 1.05)
       end
     end
     if timerResultsScreen > 8 then
@@ -349,20 +349,30 @@ function love.draw()
       love.graphics.printf("The damage you dealt to \"Mario\" was 0", 40, 335, 690, "left", 0, 1.05, 1.05)
     end
     if timerResultsScreen > 9 then
-      love.graphics.printf("Your chances of survival are 100%", 40, 355, 690, "left", 0, 1.05, 1.05)
+      love.graphics.printf("Your chances of survival are 10%", 40, 355, 690, "left", 0, 1.05, 1.05)
     end
     if timerResultsScreen > 10 then
-      love.graphics.printf("The probablity your manager will still schedule you for a shift tomorrow is 100%", 40, 375, 690, "left", 0,      1.05, 1.05)
+      love.graphics.printf("The probability your manager will still schedule you for a shift tomorrow is 100%", 40, 375, 690, "left", 0, 1.05, 1.05)
     end
     if timerResultsScreen > 11 then
       love.graphics.printf("The likelihood that you'll ever make it on the big screen is still 0%", 40, 395, 690, "left", 0, 1.05, 1.05)
     end
-    -- Leave the results screen and restart the game if spacebar is pressed.
+    if timerResultsScreen > 14 then
+      love.graphics.printf("Press space to continue the endless cycle of pain and suffering!!!", 273, 450, 220, "center", 0, 1.15, 1.15)
+    end
+    if timerResultsScreen > 16 then
+      love.graphics.printf("Press escape to release \"Bullet Bill\" from its mortal coil...", 292, 500, 190, "center", 0, 1.15, 1.15)
+    end
+    -- Leave the results screen and restart the game if spacebar is pressed, or quit game if escape is pressed.
     function love.keypressed(key)
-      if key == "space" and timerResultsScreen > 10 then
-        resetGameState()
-        isResultsScreen = false
-        isGameScreen = true
+      if timerResultsScreen > 16 then
+        if key == "space" then
+          resetGameState()
+          isResultsScreen = false
+          isGameScreen = true
+        elseif key == "escape" then
+          love.event.quit()
+        end
       end
     end
     return
@@ -378,7 +388,7 @@ function love.draw()
     goomba:rotateDraw()
   end
     
-  -- Show player speed and collected coins in top left HUD.
+  -- Show player speed (up to 2 decimal points) and collected coins in top left HUD.
   if objectSpeed < 1500 then
     createHUD()
     displayInfo("Speed", string.format("%.2f",objectSpeed), 10, 50)
