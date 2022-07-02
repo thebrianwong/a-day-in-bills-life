@@ -1,5 +1,25 @@
 # WIP
 
+7/1:
+
+Additions:
+
+- Added the functionality of quitting the game by pressing escape in the results screen.
+
+- Added prompts in the results screen to play again or quit.
+
+Adjustments:
+
+- Fixed some typos.
+
+- Adjusted the placements of some messages in the title screen and results screen to be better centered.
+
+- Slightly restructured the logic flow of the results screen key inputs for playing again or quitting the game.
+
+- Made the comment regarding the HUD slightly more detailed.
+
+- Switched the placement of the goomba stats for hitting and avoiding to be parallel with that of the coin stats (good stats then bad stats).
+
 6/30:
 
 Additions:
