@@ -1,7 +1,7 @@
 Goomba = Entity:extend()
 
 function Goomba:new(x, y)
-  Goomba.super.new(self, x, y, "goomba.png")
+  Goomba.super.new(self, x, y, "assets/goomba.png")
   self.rotation = 0
 end
   
