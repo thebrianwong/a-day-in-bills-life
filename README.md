@@ -16,6 +16,8 @@ Adjustments:
   
   - Deleted the image assets that were already in the repo.
   
+- Grouped all non-final image assets into an og files folder that will probably be deleted later.
+  
 - Slightly altered the timing of the results screen to account for sound effects.
 
 7/1:
