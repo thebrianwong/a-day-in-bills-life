@@ -1,7 +1,7 @@
 Coin = Entity:extend()
 
 function Coin:new(x, y)
-  Coin.super.new(self, x, y, "coin.png")
+  Coin.super.new(self, x, y, "assets/coin.png")
 end
   
 function Coin:update(dt)

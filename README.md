@@ -1,5 +1,23 @@
 # WIP
 
+7/2:
+
+Additions:
+
+- Added a bunch of sound effects throughout the course of the game.
+
+  - Created new variables and function playSFX() to support this.
+  
+Adjustments:
+
+- Compiled all image assets into an asset folder.
+
+  - Changed the naming path for images in all files to accomodate this change.
+  
+  - Deleted the image assets that were already in the repo.
+  
+- Slightly altered the timing of the results screen to account for sound effects.
+
 7/1:
 
 Additions:
