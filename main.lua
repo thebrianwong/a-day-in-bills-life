@@ -27,8 +27,6 @@ function love.load()
   streakGoombasCurrent = 0
   streakGoombasBest = 0
   
-  -- Gameplay variables.
-  
   -- Image dimensions to be referenced for coordinate location calculations.
   background_image = love.graphics.newImage("assets/images/background.png")
   mario_image = love.graphics.newImage("assets/images/mario.png")
@@ -191,15 +189,13 @@ function love.update(dt)
     end
   end
   
--- EDIT COINS BACK TO 5 LATER!!!!!!!!!!!!!!!!!!! EDIT GOOMBAS BACK TO 10 LATER!!!!!!!!!!!!!!!!!!!
-  
   -- Respawns coins and goombas. Stops at the end of the game.
-  while #coinTable < 25 and objectSpeed < 1500 do
+  while #coinTable < 5 and objectSpeed < 1500 do
     coin = createCoin()
     coin.speed = objectSpeed
     table.insert(coinTable, coin)
   end
-  while #goombaTable < 1 and objectSpeed < 1500 do
+  while #goombaTable < 10 and objectSpeed < 1500 do
     goomba = createGoomba()
     goomba.speed = objectSpeed
     table.insert(goombaTable, goomba)
@@ -296,9 +292,6 @@ function love.update(dt)
 end
 
 function love.draw()
-  -- Sets the canvas background to blue as a solution for scrolling vertical bars. This is the same blue as the scrolling background.
-  --love.graphics.setBackgroundColor(40/255, 123/255, 241/255)
-  
   -- Draws background images.
   for i,background in ipairs(backgroundTable) do
     background:draw()
@@ -389,16 +382,16 @@ function love.draw()
       playSFX(sfxPlayer, sfxTriggerPlayer)
       sfxTriggerPlayer = false
       love.graphics.draw(player.image, 685, 340)
-      love.graphics.printf("The damage you dealt to \"Mario\" was 0", 40, 335, 690, "left", 0, 1.05, 1.05)
+      love.graphics.printf(textResults1, 40, 335, 690, "left", 0, 1.05, 1.05)
     end
     if timerResultsScreen > 10 then
-      love.graphics.printf("Your chances of survival are 10%", 40, 355, 690, "left", 0, 1.05, 1.05)
+      love.graphics.printf(textResults2, 40, 355, 690, "left", 0, 1.05, 1.05)
     end
     if timerResultsScreen > 11 then
-      love.graphics.printf("The probability your manager will still schedule you for a shift tomorrow is 100%", 40, 375, 690, "left", 0, 1.05, 1.05)
+      love.graphics.printf(textResults3, 40, 375, 690, "left", 0, 1.05, 1.05)
     end
     if timerResultsScreen > 12 then
-      love.graphics.printf("The likelihood that you'll ever make it on the big screen is still 0%", 40, 395, 690, "left", 0, 1.05, 1.05)
+      love.graphics.printf(textResults4, 40, 395, 690, "left", 0, 1.05, 1.05)
     end
     if timerResultsScreen > 13.5 then
       sfxTriggerResults = true
@@ -406,7 +399,7 @@ function love.draw()
         playSFX(sfxResults, sfxTriggerResults)
       end
       sfxTriggerResults = false
-      love.graphics.printf("Press Space to Continue the Endless Cycle of Pain and Suffering!!!", 273, 450, 220, "center", 0, 1.15, 1.15)
+      love.graphics.printf(textResults5, 273, 450, 220, "center", 0, 1.15, 1.15)
     end
     if timerResultsScreen > 14.5 then
       sfxTriggerResults = true
@@ -414,7 +407,7 @@ function love.draw()
         playSFX(sfxResults, sfxTriggerResults)
       end
       sfxTriggerResults = false
-      love.graphics.printf("Press Escape to Release \"Bullet Bill\" From Its Mortal Coil...", 292, 500, 190, "center", 0, 1.15, 1.15)
+      love.graphics.printf(textResults6, 292, 500, 190, "center", 0, 1.15, 1.15)
     end
     -- Leave the results screen and restart the game if spacebar is pressed, or quit game if escape is pressed.
     function love.keypressed(key)

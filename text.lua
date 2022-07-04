@@ -5,3 +5,15 @@ textStory1 = "It's another refreshing new day in the \"Mushroom Kingdom\"! Unfor
 textStory2 = "But enough expository banter! Now we fly like bullets! And bills! And bills who act like bullets! For \"Bullet Bill\"...it is flying time!"
 
 textControls = "Controls: Use Arrow Keys to Move                                              Press Any Key to Start!!!"
+
+textResults1 = "The damage you dealt to \"Mario\" was 0"
+
+textResults2 = "Your chances of survival are 10%"
+
+textResults3 = "The probability your manager will still schedule you for a shift tomorrow is 100%"
+
+textResults4 = "The likelihood that you'll ever make it on the big screen is still 0%"
+
+textResults5 = "Press Space to Continue the Endless Cycle of Pain and Suffering!!!"
+
+textResults6 = "Press Escape to Release \"Bullet Bill\" From Its Mortal Coil..."
