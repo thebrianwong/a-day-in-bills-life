@@ -1,5 +1,29 @@
 # WIP
 
+7/3
+
+Additions:
+
+- Changed the game window title to "A Day in Bill's Life" and the icon to the player image.
+
+- Added some other sound effects and music.
+
+Adjustments:
+
+- Grouped images and sound files into separate asset files for better organization.
+
+  - Accordingly changed image directories in the game files.
+  
+- Adjusted some comments and removed some unecessary leftover comments.
+
+- Correctly capitalized "Goombas" in the results screen messages.
+
+- Adjusted the capitalization of the results screen instructions to achieve parity with the title screen instructions.
+
+- Changed the rate at which the player fades away after colliding with mario.
+
+- Grouped the code for objectSpeed increasing and preventing the player from moving off-screen since it didn't make sense to keep them separate.
+
 7/2:
 
 Additions:
