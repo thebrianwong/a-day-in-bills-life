@@ -4,4 +4,4 @@ textStory1 = "It's another refreshing new day in the \"Mushroom Kingdom\"! Unfor
 
 textStory2 = "But enough expository banter! Now we fly like bullets! And bills! And bills who act like bullets! For \"Bullet Bill\"...it is flying time!"
 
-textControls = "Controls: Use Arrow Keys to Move                                              Press Any Key to Start!"
+textControls = "Controls: Use Arrow Keys to Move                                              Press Any Key to Start!!!"
