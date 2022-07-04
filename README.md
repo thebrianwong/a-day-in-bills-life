@@ -1,6 +1,16 @@
-# WIP
+7/4:
 
-7/3
+Additions:
+
+- Created a proper readme, renaming the previous readme to a changelog.
+
+Adjustments:
+
+- Moved the static results screen text to the text.lua file.
+
+- Removed some comments and no longer required code.
+
+7/3:
 
 Additions:
 
