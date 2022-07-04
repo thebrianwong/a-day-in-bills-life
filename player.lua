@@ -1,7 +1,7 @@
 Player = Entity:extend()
 
 function Player:new(x, y)
-  Player.super.new(self, x, y, "assets/bullet.png")
+  Player.super.new(self, x, y, "assets/images/bullet.png")
   self.speed = 100
 end
 

@@ -13,8 +13,6 @@ function love.load()
   isGameScreen = false
   isResultsScreen = false
   
-  -- Results screen variables.
-  
   -- Results screen appearance.
   resultsScreenOpacity = 0
   timerResultsScreen = 0
@@ -32,8 +30,8 @@ function love.load()
   -- Gameplay variables.
   
   -- Image dimensions to be referenced for coordinate location calculations.
-  background_image = love.graphics.newImage("assets/background.png")
-  mario_image = love.graphics.newImage("assets/mario.png")
+  background_image = love.graphics.newImage("assets/images/background.png")
+  mario_image = love.graphics.newImage("assets/images/mario.png")
   
   -- Used to calculate how fast different aspects of the game scroll and move.
   backgroundSpeed = 20
@@ -73,20 +71,27 @@ function love.load()
     table.insert(goombaTable, goomba)
   end
   
-  -- sfx test
+  -- Loading in audio.
   sfxTriggerCoin = true
   sfxTriggerGoomba = true
   sfxTriggerSB = true
+  sfxTriggerEndGame = true
   sfxTriggerMario = true
   sfxTriggerPlayer = true
+  sfxTriggerLaugh = true
   sfxTriggerResults = true
-  sfxGameStart = love.audio.newSource("start.ogg", "static")
-  sfxCoin = love.audio.newSource("coin.ogg", "static")
-  sfxGoomba = love.audio.newSource("goomba.ogg", "static")
-  sfxSpeedBarrier = love.audio.newSource("speedbarrier.ogg", "static")
-  sfxMario = love.audio.newSource("mario.ogg", "static")
-  sfxPlayer = love.audio.newSource("player.ogg", "static")
-  sfxResults = love.audio.newSource("results.ogg", "static")
+  sfxGameStart = love.audio.newSource("assets/sounds/start.ogg", "static")
+  sfxCoin = love.audio.newSource("assets/sounds/coin.ogg", "static")
+  sfxGoomba = love.audio.newSource("assets/sounds/goomba.ogg", "static")
+  sfxSpeedBarrier = love.audio.newSource("assets/sounds/speedbarrier.ogg", "static")
+  sfxCannotMove = love.audio.newSource("assets/sounds/cannotmove.ogg", "static")
+  sfxEndGame = love.audio.newSource("assets/sounds/endgame.ogg", "static")
+  sfxMario = love.audio.newSource("assets/sounds/mario.ogg", "static")
+  sfxPlayer = love.audio.newSource("assets/sounds/player.ogg", "static")
+  sfxLaugh = love.audio.newSource("assets/sounds/laugh.ogg", "static")
+  sfxResults = love.audio.newSource("assets/sounds/results.ogg", "static")
+  musicTitleAndGame = love.audio.newSource("assets/sounds/titlescreen.ogg", "stream")
+  musicResultsScreen = love.audio.newSource("assets/sounds/resultsscreen.ogg", "stream")
 end
 
 function love.update(dt)
@@ -194,7 +199,7 @@ function love.update(dt)
     coin.speed = objectSpeed
     table.insert(coinTable, coin)
   end
-  while #goombaTable < 2 and objectSpeed < 1500 do
+  while #goombaTable < 1 and objectSpeed < 1500 do
     goomba = createGoomba()
     goomba.speed = objectSpeed
     table.insert(goombaTable, goomba)
@@ -209,12 +214,15 @@ function love.update(dt)
     sfxTriggerSB = false
     speedBarrier = true
     if player.x >= 300 then
+      sfxCannotMove:play()
       forceX(player, -2500, dt)
     end
   end   
   
   -- At the end of the game, the player can't be controlled and is forced to specific coordinates so that it crashes into mario's nose.
   if objectSpeed > 1500 then
+    playSFX(sfxEndGame, sfxTriggerEndGame)
+    sfxTriggerEndGame = false
     player.speed = 0
     if player.x > 302 then
       forceX(player, -100, dt)
@@ -254,6 +262,7 @@ function love.update(dt)
   Mario then moves off-screen.
   ]]--
   if crashed then
+    musicTitleAndGame:stop()
     timerCrashed = timerCrashed + 1 * dt
     playerColor = playerColor + 300 * dt
     if timerCrashed > 2.25 then
@@ -261,8 +270,10 @@ function love.update(dt)
       sfxTriggerPlayer = false
       if player.y > 0 and player.y < love.graphics.getWidth() then
         forceY(player, 250, dt)
-        playerOpacity = playerOpacity - 0.65 * dt
+        playerOpacity = playerOpacity - 0.40 * dt
       elseif player.y >= love.graphics.getWidth() then
+        playSFX(sfxLaugh, sfxTriggerLaugh)
+        sfxTriggerLaugh = false
         forceX(mario, -350, dt)
         if mario.x + mario.width < 0 then
           sfxTriggerPlayer = true
@@ -273,13 +284,9 @@ function love.update(dt)
     end
   end
   
-  -- Speed passively increases to contribute to sense of speed.
-  if crashed == false then
-    objectSpeed = objectSpeed + 0.5 * dt
-  end
-  
   -- Prevents player from moving off-screen during regular gameplay.
   if crashed == false then
+    objectSpeed = objectSpeed + 0.5 * dt
     if player.y < 0 then
       player.y = 0
     elseif player.y + player.height > love.graphics.getHeight() then
@@ -299,6 +306,8 @@ function love.draw()
   
   -- Title screen.
   if isTitleScreen then
+    musicTitleAndGame:setLooping(true)
+    musicTitleAndGame:play()
     love.graphics.setColor(0, 0, 0, 0.50)
     love.graphics.rectangle("fill", 20, 20, 760, 560)
     love.graphics.setColor(1, 1, 1)
@@ -319,6 +328,7 @@ function love.draw()
   
   -- Lists out various game instance stats in a result screen.
   if isResultsScreen then
+    musicResultsScreen:play()
     if resultsScreenOpacity < 1 then
       fadeToBlack(resultsScreenOpacity)
     end
@@ -356,23 +366,23 @@ function love.draw()
       sfxTriggerGoomba = false
       love.graphics.draw(goomba.image, 697, 235)
       if avoidedGoombas == 1 then
-        love.graphics.printf("You avoided 1 \"goomba\"", 40, 235, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You avoided 1 \"Goomba\"", 40, 235, 690, "left", 0, 1.05, 1.05)
       else
-        love.graphics.printf("You avoided " .. avoidedGoombas .. " \"goombas\"", 40, 235, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You avoided " .. avoidedGoombas .. " \"Goombas\"", 40, 235, 690, "left", 0, 1.05, 1.05)
       end
     end
     if timerResultsScreen > 7 then
       if hitGoombas == 1 then
-        love.graphics.printf("You hit 1 \"goomba\"", 40, 255, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You hit 1 \"Goomba\"", 40, 255, 690, "left", 0, 1.05, 1.05)
       else
-        love.graphics.printf("You hit " .. hitGoombas .. " \"goombas\"", 40, 255, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("You hit " .. hitGoombas .. " \"Goombas\"", 40, 255, 690, "left", 0, 1.05, 1.05)
       end
     end
     if timerResultsScreen > 8 then
       if streakGoombasBest == 1 then
-        love.graphics.printf("The most \"goombas\" you avoided in a row was 1 \"goomba\"", 40, 275, 690, "left", 0, 1.05, 1.05)
+        love.graphics.printf("The most \"Goombas\" you avoided in a row was 1 \"Goomba\"", 40, 275, 690, "left", 0, 1.05, 1.05)
       else
-        love.graphics.printf("The most \"goombas\" you avoided in a row were " .. streakGoombasBest .. " \"goombas\"", 40, 275, 690, "left", 0 , 1.05, 1.05)
+        love.graphics.printf("The most \"Goombas\" you avoided in a row were " .. streakGoombasBest .. " \"Goombas\"", 40, 275, 690, "left", 0 , 1.05, 1.05)
       end
     end
     if timerResultsScreen > 9 then
@@ -391,16 +401,28 @@ function love.draw()
       love.graphics.printf("The likelihood that you'll ever make it on the big screen is still 0%", 40, 395, 690, "left", 0, 1.05, 1.05)
     end
     if timerResultsScreen > 13.5 then
-      love.graphics.printf("Press space to continue the endless cycle of pain and suffering!!!", 273, 450, 220, "center", 0, 1.15, 1.15)
+      sfxTriggerResults = true
+      if timerResultsScreen < 14 then
+        playSFX(sfxResults, sfxTriggerResults)
+      end
+      sfxTriggerResults = false
+      love.graphics.printf("Press Space to Continue the Endless Cycle of Pain and Suffering!!!", 273, 450, 220, "center", 0, 1.15, 1.15)
     end
     if timerResultsScreen > 14.5 then
-      love.graphics.printf("Press escape to release \"Bullet Bill\" from its mortal coil...", 292, 500, 190, "center", 0, 1.15, 1.15)
+      sfxTriggerResults = true
+      if timerResultsScreen < 15 then
+        playSFX(sfxResults, sfxTriggerResults)
+      end
+      sfxTriggerResults = false
+      love.graphics.printf("Press Escape to Release \"Bullet Bill\" From Its Mortal Coil...", 292, 500, 190, "center", 0, 1.15, 1.15)
     end
     -- Leave the results screen and restart the game if spacebar is pressed, or quit game if escape is pressed.
     function love.keypressed(key)
       if timerResultsScreen > 14.5 then
         if key == "space" then
           sfxGameStart:play()
+          musicResultsScreen:stop()
+          musicTitleAndGame:play()
           resetGameState()
           isResultsScreen = false
           isGameScreen = true
@@ -496,8 +518,10 @@ function resetGameState()
   sfxTriggerCoin = true
   sfxTriggerGoomba = true
   sfxTriggerSB = true
+  sfxTriggerEndGame = true
   sfxTriggerMario = true
   sfxTriggerPlayer = true
+  sfxTriggerLaugh = true
   sfxTriggerResults = true
   timerResultsScreen = 0
   timerMario = 0
