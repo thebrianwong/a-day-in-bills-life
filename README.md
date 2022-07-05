@@ -52,5 +52,72 @@ As is probably evident to most seasoned veterans, this is both my first project 
   - This actually wasn't the ultimate solution but it fixed something at the time (I think it was the overlap issue).
 - 5) The actually solution was to set the x-coordinates of the images to be the x-coordinate + the width of the image of the rightmost image. The problem of the previous approach of just setting the x-coordinates to be the 2 times the width of the image is that this wouldn't perfectly line up with the middle image.
   
- ##### Breaking Down the Fade to Black:
+After all that, I was finally able to implement a smooth scrolling background.
+  
+##### Breaking Down the Fade to Black:
 Another common video game thing that most people experience but never really think about is the screen fading to black. In this game, the screen fades to black after "Mario" walks off-screen to the left, leading the player to see a results screen. LÖVE doesn't have its own inherent fade to black function under the love.graphics module. Looking online didn't lead to any concrete help (I actually did look for this feature), so I had to come up with my own solution. This required me to really break down what fading to black meant and what exactly was being shown on screen. I eventually realized that transparency played a role since you have to transition from a point where you can see everything on screen to a point where you just see black. One of my first thoughts was to create a separate class just for this feature, where I would be able to adjust some opacity property. I tried this approach but it didn't work, either because I messed up the implementation test or it just wasn't the right way to go about it.
+
+After some experimenting, I decided to approach this problem by drawing black rectangles to the screen that would start of with 0 opacity (so completely transparent) then increasing the opacity with each new rectangle. This drew a slightly blacker rectangle until the screen was fully dark. The final color of the results screen was not completely black #000000. This is so that "Bullet Bill" is easier to see.
+  
+I incorporated my learnings from this feature into the feature where "Bullet Bill" fades away after crashing in to "Mario".
+  
+##### Moving Off-Screen:
+During regular gameplay, the player is not able to move beyond the boundaries of the screen. The code that prevents this movement was originally located together in 2 if statements (1 for horizontal movement and 1 for vertical movement) in the player.lua file. However, after deciding on implementing the event sequence that takes place after crashing into "Mario" and having "Bullet Bill" fall down into its implied demise, I realized I had to move the if statement for horizontal movement to main.lua so that I could "turn it off" after the crash.
+ 
+##### Large Text:
+The large paragraph and some other strings of text are located in the text.lua file, away from main.lua. My initial plans were to have a large paragraph of text on the title screen and another paragraph on the results screen. The title screen paragraph exists, but I decided against a results screen paragraph due to there being a lack of room given the game stats. Since these 2 paragraphs would have taken up a ton of space in the IDE, I had decided to house text in text.lua.
+  
+##### Grammatically Correct:
+No one would probably ever notice outside of looking at the code, but the game stats take into account the edge cases of collecting only 1 coin or avoiding only 1 "Goomba". I doubt anyone would be able to purposefully do so, but if they do, they'll see that the game stats follow subject-verb agreement.
+  
+##### Music & SFX:
+It's no secret that this game is based on a certain famous Nintendo IP, but why are the images and sprites the only assets taken from other games? Why not go all the way and use the music and sound effects too?
+  
+The answer:
+  
+I just though it would be funny to make sound effects and find random free music to use.
+  
+##### Why is the story so sad? :(
+  
+I don't know, I just thought it would be funny.
+  
+# Credits
+#### Here are a list of the assets used in this game:
+##### Images
+
+![Background Image](assets/images/background.png)
+  
+Modified version of this [art](https://www.deviantart.com/sadistmoi/art/Mario-Clouds-Desktop-127026235) by sadistmoi on DeviantArt.
+  
+![Player Image](assets/images/bullet.png)
+  
+Modified version of this [art](https://www.seekpng.com/ima/u2q8i1y3w7i1u2y3/) originally by Nintendo.
+  
+![Coin Image](assets/images/coin.png)
+  
+Modified version of this [art](https://www.softicons.com/game-icons/super-mario-icons-by-sandro-pereira/retro-coin-icon) originally by Nintendo.
+  
+![Goomba Image](assets/images/goomba.png)
+  
+Modified version of this [art](https://www.newgrounds.com/art/view/snipeshotofficial/super-mario-bros-3-goomba) by SnipeshotOfficial on Newgrounds, originally by Nintendo.
+  
+![Mario Image](assets/images/mario.png)
+  
+Modified version of this [art](https://www.pixilart.com/art/super-mario-bros-3-mario-sprite-992ef93085dd645) by HarrisonStrange on Pixilart, originally by Nintendo.
+  
+##### Music
+[8 Bit Menu](https://www.fesliyanstudios.com/royalty-free-music/download/8-bit-menu/287) - by David Renda
+  
+Credit to https://www.FesliyanStudios.com for the background music.
+  
+This song plays on the title screen and regular gameplay.
+  
+[Game Over](https://patrickdearteaga.com/chiptune-8-bit-retro/) - by Patrick de Arteaga
+  
+This song plays on the results screen.
+  
+##### Sound Effects
+  
+The warp sound effect that plays when "Mario" continues about his day after being shot at was made using [ChipTone](https://sfbgames.itch.io/chiptone) by SFBGames.
+  
+All of the other sound effects were made using [Bfxr](https://www.bfxr.net/) by increpare.
