@@ -16,7 +16,7 @@ In addition, there are some supplementary functions at the bottom, including the
 This is a library file that allows classes to be created. It can be found [here](https://github.com/rxi/classic) and is used in [Sheepolution's guide to LÖVE on classes](https://sheepolution.com/learn/book/11).
 
 ##### entity.lua:
-This file draws on class.lua to allow entities to be created in the game. The original file can be found on [another chapter in Sheepolution's guide to LÖVE] (https://sheepolution.com/learn/book/23). I have modified it to include the speed property.
+This file draws on class.lua to allow entities to be created in the game. The original file can be found on [another chapter in Sheepolution's guide to LÖVE](https://sheepolution.com/learn/book/23). I have modified it to include the speed property.
 
 ##### coin.lua, background.lua, and mario.lua:
 These files are pretty barebones. They exist just to create their respective entities that inherit the properties that exist in entity.lua, as well as stating the paths to their respective images.
@@ -37,4 +37,4 @@ Changes the window title to the name of the game and the window icon to the play
 
 #### Design Choices:
 
-##### filler
+##### filler:
