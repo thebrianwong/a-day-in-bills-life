@@ -35,6 +35,22 @@ This file contains most of the static text shown in the game. This was mainly to
 ##### conf.lua:
 Changes the window title to the name of the game and the window icon to the player icon. Also turns on v-sync.
 
-#### Design Choices:
+#### Design Choices (order is based on me looking through the game files, not in development order):
 
-##### filler:
+##### Displayed Speed is a Lie?:
+At first glance, the speed that is displayed in the top left of the game would appear to indicate the speed of the player. However, that is not the case as it actually displays the speed of the coins and "Goombas". The player has its own speed value that is not displayed. These 3 entities shared the same speed when I first started making this game, but after some play testing, I realized that the game would play better if the player was able to move faster than the coins and "Goombas". And of course, the background has its own speed because it wouldn't make sense to move as fast as everything in the foreground.
+
+##### Taking Scrolling Backgrounds for Granted:
+As is probably evident to most seasoned veterans, this is both my first project and first game. One things that most games have that I never really stopped to think about before are scrolling backgrounds. This game initially had a static background, but I decided to try implementing a scrolling background to contribute to the game's sense of speed. This was one of the harder features to nail down, especially since, now that I think about it, I might have forgotten to make thorough Google searches and made through multiple instances of trial and error. This is the rough timeline from start to finish:
+  
+- 1) Background images would be created in a table then drawn to the screen. Upon leaving the screen, the image would be deleted from the table and a new image would be added to the table.
+- 2) Instead of removing the image from the table, the image's x-coordinate would instead be changed to be off-screen to the right at 2 times the width of the image, which was the starting point of the right most image. (due to the size of the image, there needed to be 2 rows and 3 columns of the image as a 2 dimensional array).
+  - There was an issue where eventually some black vertical bars would appear as the game progressed. After searching online, I thought it was some v-sync issue but forcing v-sync to be own didn't fix that issue.
+- 3) I put a bandage solution in place so that I could focus on making other features. This bandage solution was to just turn the background of the screen to be the same blue as the background image so that the vertical bars would not be noticeable.
+  - There was also still an issue where the images would eventually overlap each other, but I just put that aside for the time being.
+- 4) At this point, the images were not scrolling using delta time, which seems to be a best practice. I eventually changed the images to use delta time after getting one step closer to figuring the solution by just changing the order of the logic in which the images scrolled.
+  - This actually wasn't the ultimate solution but it fixed something at the time (I think it was the overlap issue).
+- 5) The actually solution was to set the x-coordinates of the images to be the x-coordinate + the width of the image of the rightmost image. The problem of the previous approach of just setting the x-coordinates to be the 2 times the width of the image is that this wouldn't perfectly line up with the middle image.
+  
+ ##### Breaking Down the Fade to Black:
+Another common video game thing that most people experience but never really think about is the screen fading to black. In this game, the screen fades to black after "Mario" walks off-screen to the left, leading the player to see a results screen. LÖVE doesn't have its own inherent fade to black function under the love.graphics module. Looking online didn't lead to any concrete help (I actually did look for this feature), so I had to come up with my own solution. This required me to really break down what fading to black meant and what exactly was being shown on screen. I eventually realized that transparency played a role since you have to transition from a point where you can see everything on screen to a point where you just see black. One of my first thoughts was to create a separate class just for this feature, where I would be able to adjust some opacity property. I tried this approach but it didn't work, either because I messed up the implementation test or it just wasn't the right way to go about it.
