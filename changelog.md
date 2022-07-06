@@ -1,3 +1,11 @@
+7/5:
+
+- Recorded and edited Youtube video.
+
+- Added the video link to the readme.
+
+- Added some more other info to the readme.
+
 7/4:
 
 Additions:
