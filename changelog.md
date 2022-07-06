@@ -6,6 +6,8 @@
 
 - Added some more other info to the readme.
 
+- Removed a bunch of duplicate files.
+
 7/4:
 
 Additions:
