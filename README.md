@@ -1,7 +1,7 @@
 # A Day in Bill's Life
 
 #### Video Demo: 
-WIP <URL HERE>
+[Here](https://www.youtube.com/watch?v=7L-_oPfU0XA)
 
 #### Description:
 A Day in Bill's Life is a side scrolling video game written in Lua with the LÖVE framework in which you play as "Bullet Bill". It's just another regular day in Bill's life where you are entasked by "Bowser" to defeat "Mario". To do so, you must collect coins to go faster and avoid crashing into any "Goombas" that will reduce your speed. Things start off manageable, but soon become hectic as you start speeding through the skies.
@@ -121,3 +121,5 @@ This song plays on the results screen.
 The warp sound effect that plays when "Mario" continues about his day after being shot at was made using [ChipTone](https://sfbgames.itch.io/chiptone) by SFBGames.
   
 All of the other sound effects were made using [Bfxr](https://www.bfxr.net/) by increpare.
+
+###### Video edited with [Kapwing Video Editor](https://www.kapwing.com/video-editor).
