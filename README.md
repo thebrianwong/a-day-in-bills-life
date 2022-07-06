@@ -6,6 +6,24 @@
 #### Description:
 A Day in Bill's Life is a side scrolling video game written in Lua with the LÖVE framework in which you play as "Bullet Bill". It's just another regular day in Bill's life where you are entasked by "Bowser" to defeat "Mario". To do so, you must collect coins to go faster and avoid crashing into any "Goombas" that will reduce your speed. Things start off manageable, but soon become hectic as you start speeding through the skies.
 
+#### How to Play:
+##### Option 1:
+1) Download this repo as a zip file.
+2) Extract A Day in Bill's Life.exe.
+3) Run the game.
+
+##### Option 2 (if you don't want to just run a random .exe file on the Internet):
+1) Download this repo as a zip file.
+2) Extract all files except A Day in Bill's Life.exe.
+3) Select all extracted files.
+4) Right click the selected files.
+5) Click on "Send to".
+6) Click on "Compressed (zipped) folder".
+7) Change the file name to "A Day in Bill's Life".
+8) Change the file extension from ".zip" to ".love".
+9) Download LÖVE from its [official website](https://love2d.org/).
+10) Run A Day in Bill's Life.love. If prompted, choose to open it with LÖVE.
+
 #### Files:
 ##### main.lua:
 This file contains all of the logic that dictates the flow of the game. It consists of the required 3 functions of the LÖVE framework to run a game: love.load(), love.update(), and love.draw(). Within these 3 functions is code that you would expect to see after playing the game, such as spawning and despawning of coins and "Goombas", the ability to see your player speed and number of collected coins increase, and the ending sequence of crashing into "Mario". There are also some other  more "under the hood" features, such as the logic of when sound effects play, the logic that determines when the ending sequence plays, and the logic that keeps track of how many coins and "Goombas" you have collected and crashed into.
