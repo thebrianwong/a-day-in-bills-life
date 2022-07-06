@@ -1,10 +1,28 @@
 # A Day in Bill's Life
 
 #### Video Demo: 
-WIP <URL HERE>
+[Here](https://www.youtube.com/watch?v=7L-_oPfU0XA)
 
 #### Description:
 A Day in Bill's Life is a side scrolling video game written in Lua with the LÖVE framework in which you play as "Bullet Bill". It's just another regular day in Bill's life where you are entasked by "Bowser" to defeat "Mario". To do so, you must collect coins to go faster and avoid crashing into any "Goombas" that will reduce your speed. Things start off manageable, but soon become hectic as you start speeding through the skies.
+
+#### How to Play:
+##### Option 1:
+1) Download this repo as a zip file.
+2) Extract A Day in Bill's Life.exe.
+3) Run the game.
+
+##### Option 2 (if you don't want to just run a random .exe file on the Internet):
+1) Download this repo as a zip file.
+2) Extract all files except A Day in Bill's Life.exe.
+3) Select all extracted files.
+4) Right click the selected files.
+5) Click on "Send to".
+6) Click on "Compressed (zipped) folder".
+7) Change the file name to "A Day in Bill's Life".
+8) Change the file extension from ".zip" to ".love".
+9) Download LÖVE from its [official website](https://love2d.org/).
+10) Run A Day in Bill's Life.love. If prompted, choose to open it with LÖVE.
 
 #### Files:
 ##### main.lua:
@@ -35,13 +53,13 @@ This file contains most of the static text shown in the game. This was mainly to
 ##### conf.lua:
 Changes the window title to the name of the game and the window icon to the player icon. Also turns on v-sync.
 
-#### Design Choices (order is based on me looking through the game files, not in development order):
+#### Design Choices on Noteworthy Elements:
 
 ##### Displayed Speed is a Lie?:
 At first glance, the speed that is displayed in the top left of the game would appear to indicate the speed of the player. However, that is not the case as it actually displays the speed of the coins and "Goombas". The player has its own speed value that is not displayed. These 3 entities shared the same speed when I first started making this game, but after some play testing, I realized that the game would play better if the player was able to move faster than the coins and "Goombas". And of course, the background has its own speed because it wouldn't make sense to move as fast as everything in the foreground.
 
 ##### Taking Scrolling Backgrounds for Granted:
-As is probably evident to most seasoned veterans, this is both my first project and first game. One things that most games have that I never really stopped to think about before are scrolling backgrounds. This game initially had a static background, but I decided to try implementing a scrolling background to contribute to the game's sense of speed. This was one of the harder features to nail down, especially since, now that I think about it, I might have forgotten to make thorough Google searches and made through multiple instances of trial and error. This is the rough timeline from start to finish:
+As is probably evident to most seasoned coding veterans, this is both my first project and first game. One things that most games have that I never really stopped to think about before are scrolling backgrounds. This game initially had a static background, but I decided to try implementing a scrolling background to contribute to the game's sense of speed. This was one of the harder features to nail down, especially since, now that I think about it, I might have forgotten to make thorough Google searches and made through multiple instances of trial and error. This is the rough timeline from start to finish:
   
 - 1) Background images would be created in a table then drawn to the screen. Upon leaving the screen, the image would be deleted from the table and a new image would be added to the table.
 - 2) Instead of removing the image from the table, the image's x-coordinate would instead be changed to be off-screen to the right at 2 times the width of the image, which was the starting point of the right most image. (due to the size of the image, there needed to be 2 rows and 3 columns of the image as a 2 dimensional array).
@@ -52,7 +70,7 @@ As is probably evident to most seasoned veterans, this is both my first project 
   - This actually wasn't the ultimate solution but it fixed something at the time (I think it was the overlap issue).
 - 5) The actually solution was to set the x-coordinates of the images to be the x-coordinate + the width of the image of the rightmost image. The problem of the previous approach of just setting the x-coordinates to be the 2 times the width of the image is that this wouldn't perfectly line up with the middle image.
   
-After all that, I was finally able to implement a smooth scrolling background.
+After all that, I was finally able to implement a smooth scrolling background. Despite the troubles, this was a good learning experience.
   
 ##### Breaking Down the Fade to Black:
 Another common video game thing that most people experience but never really think about is the screen fading to black. In this game, the screen fades to black after "Mario" walks off-screen to the left, leading the player to see a results screen. LÖVE doesn't have its own inherent fade to black function under the love.graphics module. Looking online didn't lead to any concrete help (I actually did look for this feature), so I had to come up with my own solution. This required me to really break down what fading to black meant and what exactly was being shown on screen. I eventually realized that transparency played a role since you have to transition from a point where you can see everything on screen to a point where you just see black. One of my first thoughts was to create a separate class just for this feature, where I would be able to adjust some opacity property. I tried this approach but it didn't work, either because I messed up the implementation test or it just wasn't the right way to go about it.
@@ -121,3 +139,5 @@ This song plays on the results screen.
 The warp sound effect that plays when "Mario" continues about his day after being shot at was made using [ChipTone](https://sfbgames.itch.io/chiptone) by SFBGames.
   
 All of the other sound effects were made using [Bfxr](https://www.bfxr.net/) by increpare.
+
+###### Video edited with [Kapwing Video Editor](https://www.kapwing.com/video-editor).
