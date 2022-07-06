@@ -100,6 +100,8 @@ I just though it would be funny to make sound effects and find random free music
 I don't know, I just thought it would be funny.
   
 # Credits
+[classic](https://github.com/rxi/classic) by rxi.
+
 #### Here are a list of the assets used in this game:
 ##### Images
 
